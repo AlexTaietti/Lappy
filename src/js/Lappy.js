@@ -330,6 +330,15 @@ var Lappy = /*#__PURE__*/function () {
       }
     }
   }, {
+    key: "addGraphicalTest",
+    value: function addGraphicalTest(graphicalTestData) {
+      if (!this.graphicalTest) {
+        this.graphicalTest = new GraphicalTest(graphicalTestData);
+      } else {
+        throw 'Graphical test already initialised!';
+      }
+    }
+  }, {
     key: "watch",
     value: function watch() {
       this.updateCoordinates();

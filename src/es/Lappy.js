@@ -235,6 +235,17 @@ class Lappy {
 	}
 
 
+	addGraphicalTest (graphicalTestData) {
+
+		if(!this.graphicalTest){
+			this.graphicalTest = new GraphicalTest(graphicalTestData);
+		} else {
+			throw 'Graphical test already initialised!';
+		}
+
+	}
+
+
 	watch () {
 
 		this.updateCoordinates();
