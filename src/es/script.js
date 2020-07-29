@@ -21,14 +21,21 @@ window.onload = function () {
 
 	graphicalTestToggle.addEventListener('click', function(){
 
-		if(!L.graphicalTest.paused){
-
-			L.graphicalTest.pause();
-
+		if(!L.graphicalTest) {
+			L.addGraphicalTest({ context: mainCtx });
+			L.displayGraphicalTest();
 		} else {
 
-			L.graphicalTest.resume();
-			L.displayGraphicalTest();		
+			if(!L.graphicalTest.paused){
+
+				L.graphicalTest.pause();
+
+			} else {
+
+				L.graphicalTest.resume();
+				L.displayGraphicalTest();		
+
+			}	
 
 		}
 
@@ -159,11 +166,7 @@ window.onload = function () {
 
 
 	//initialise Lappy
-	const L = new Lappy({
-		
-		graphicalTest: { context: mainCtx }
-
-	});
+	const L = new Lappy();
 
 	
 	//add the overlap object to be watched (could be more than one) to lappy

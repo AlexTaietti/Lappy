@@ -15,11 +15,18 @@ window.onload = function () {
 
   var graphicalTestToggle = $('#graphicalTestToggle');
   graphicalTestToggle.addEventListener('click', function () {
-    if (!L.graphicalTest.paused) {
-      L.graphicalTest.pause();
-    } else {
-      L.graphicalTest.resume();
+    if (!L.graphicalTest) {
+      L.addGraphicalTest({
+        context: mainCtx
+      });
       L.displayGraphicalTest();
+    } else {
+      if (!L.graphicalTest.paused) {
+        L.graphicalTest.pause();
+      } else {
+        L.graphicalTest.resume();
+        L.displayGraphicalTest();
+      }
     }
   }); //canvas set up
 
@@ -127,11 +134,7 @@ window.onload = function () {
   M.addTrackedObject(C);
   M.addTrackedObject(S); //initialise Lappy
 
-  var L = new _Lappy.Lappy({
-    graphicalTest: {
-      context: mainCtx
-    }
-  }); //add the overlap object to be watched (could be more than one) to lappy
+  var L = new _Lappy.Lappy(); //add the overlap object to be watched (could be more than one) to lappy
 
   L.addActiveObject(M); //kick the demo off
 
