@@ -97,8 +97,10 @@ window.onload = function () {
 
 	window.addEventListener('resize', function(){
 
-		L.updateGraphicalTest();
-		L.watch();
+		if(L.graphicalTest){
+			L.updateGraphicalTest();
+			L.watch();
+		}
 
 	});
 
