@@ -4,6 +4,7 @@ class GraphicalTest {
 		this.context = options.context || undefined;
 		this.approachColor = options.approachStroke || 'red';
 		this.approachFill = options.approachFill || 'red';
+		this.paused = false;
 	}
 
 	displayCoordinates (target) {
@@ -19,28 +20,38 @@ class GraphicalTest {
 	}
 
 	drawApproachArea (target) {
-		if(target.offset.x || target.offset.y){	
-			this.context.beginPath();
-			this.context.strokeStyle = this.approachColor;
-			this.context.setLineDash([5, 10]);
-			this.context.strokeRect(target.coordinates[0].x, target.coordinates[0].y, target.coordinates[2].x - target.coordinates[0].x, target.coordinates[2].y - target.coordinates[0].y);
-			this.context.moveTo(0, target.offset);
-			this.context.lineTo(window.innerWidth, target.offset);
-			this.context.stroke();
-			this.context.closePath();
-		}
+		this.context.beginPath();
+		this.context.strokeStyle = this.approachColor;
+		this.context.setLineDash([5, 10]);
+		this.context.strokeRect(target.coordinates[0].x, target.coordinates[0].y, target.coordinates[2].x - target.coordinates[0].x, target.coordinates[2].y - target.coordinates[0].y);
+		this.context.moveTo(0, target.offset);
+		this.context.lineTo(window.innerWidth, target.offset);
+		this.context.stroke();
+		this.context.closePath();
 	}
 
 
 	display (target) {
 		this.displayCoordinates(target);
-		if (target.offset) this.drawApproachArea(target);
-		if(target.active){
+		if (target.offset.x || target.offset.y) this.drawApproachArea(target);
+		if(target.active && target.trackedObjects.length){
 			for(i = 0; i < target.trackedObjects.length; i ++){
 				this.display(target.trackedObjects[i]);
 			}
 		}
 	}
+
+	clearTestDisplay () {
+		this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
+	}
+
+	pause () {
+		this.clearTestDisplay();
+		this.paused = true;
+	}
+
+	resume () { this.paused = false; }
+
 
 }
 
@@ -182,14 +193,16 @@ class Lappy {
 			x: main.axis.x ? overlapX : overlapY,
 			y: main.axis.y ? overlapY : overlapX
 		}
+	
 	}
 
 
+	//if neither of the two objects involved in the overlap have an offset property the only two callbacks executed will be "onOverlap" and "onLeave" ("definitely something I'll fix soon!")
 	checkOverlap (main, check) {
 		overlap = this.calculateOverlap(main, check);
 		if(overlap.x && overlap.y){
 			if(Math.abs(overlap.x) === Math.abs(overlap.y)){
-				if(overlap.x % 2 === 0 && overlap.y % 2 === 0) {  //since we have already verified that the overlap data for both axis would have the same absolute value we can only check one of the two
+				if(overlap.x % 2 === 0 && overlap.y % 2 === 0) { 
 					if( ((overlap.x + check.lastOverlapData.x) % 3 === 0 && overlap.x * check.lastOverlapData.x > 0 && overlap.x % 2 === 0) || ((overlap.y + check.lastOverlapData.y) % 3 === 0 && overlap.y * check.lastOverlapData.y > 0 && overlap.y % 2 === 0) ){
 						main.onExit(main.HTML, check.HTML);
 					} else {
@@ -211,23 +224,29 @@ class Lappy {
 		check.lastOverlapData = overlap;
 	}
 
+
+	displayGraphicalTest () {
+
+		this.graphicalTest.clearTestDisplay();
+		for(i = 0; i < this.overlapObjects.length; i++){
+			this.graphicalTest.display(this.overlapObjects[i]);
+		}
+
+	}
+
+
 	watch () {
 
 		this.updateCoordinates();
 
-		if(this.graphicalTest){
-			this.graphicalTest.context.clearRect(0, 0, this.graphicalTest.context.canvas.width, this.graphicalTest.context.canvas.height);
-			for(i = 0; i < this.overlapObjects.length; i++){
-				this.graphicalTest.display(this.overlapObjects[i]);
-			}
+		if(this.graphicalTest && !this.graphicalTest.paused){
+			this.displayGraphicalTest();
 		}
 		
 		for(i = 0; i < this.overlapObjects.length; i++){
-
 			for(r = 0; r < this.overlapObjects[i].trackedObjects.length; r++){
 				this.checkOverlap(this.overlapObjects[i], this.overlapObjects[i].trackedObjects[r]);
 			}
-
 		}
 	
 	}
