@@ -38,6 +38,37 @@ canvas{
 
 }
 
+#graphicalTestToggle{
+
+	position: fixed;
+	top: 10px;
+	left: 10px;
+	font-size: 2rem;
+	padding: 5px;
+	cursor: pointer;
+
+	&::after{
+
+		display: block;
+		content: '';
+		transition-duration: .5s;
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		background-color: black;
+		width: 0;
+		height: 1px;
+
+	}
+
+	&:hover{
+
+		&::after{ width: 100%; }
+
+	}
+
+}
+
 
 .test-container{
 
@@ -51,12 +82,31 @@ canvas{
 
 	&.main{
 
-		background-color: red;
 		z-index: 1;
 		left: 50%;
 		transform: translateX(-50%);
 		position: fixed;
-		background-color: #d9514e;
+
+		//white & cherry
+		background-color: #F93822;
+		color: #FDD20E;
+
+		&.overlapping{
+
+			//ghost
+			background-color: #101820;
+			color: #F2AA4C;
+			opacity: 0.5;
+
+		}
+
+		&.approaching{
+
+			//purple & yellow
+			color: #FCF951;
+			background-color: #422057;
+
+		}
 
 	}
 
@@ -65,7 +115,26 @@ canvas{
 		position: relative;
 		z-index: 0;
 		left: 100px;
-		background-color: #2da8d8;
+
+		//purple
+		color: #DF6589;
+		background-color: #3C1053;
+
+		&.overlapping{
+
+			//forest
+			background-color: #2C5F2D;
+			color: #97BC62;
+
+		}
+
+		&.approaching{
+
+			//yellow jacket
+			background-color: #101820;
+			color: #FEE715;
+
+		}
 	}
 
 	&.second{
@@ -74,7 +143,26 @@ canvas{
 		position: relative;
 		z-index: 0;
 		right: 100px;
-		background-color: #2da8d8;
+
+		//blue & yellow
+		background-color: #00B1D2;
+		color: #FDDB27;
+
+		&.overlapping{
+
+			//blue
+			background-color: #00203F;
+			color: #ADEFD1;
+
+		}
+
+		&.approaching{
+
+			//cherry tomato
+			color: #ED2B33;
+			background-color: #D85A7F;
+
+		}
 
 	}
 
@@ -84,3 +172,40 @@ canvas{
 
 
 h1{ padding: 20px; }
+
+@media screen and (max-width: 768px){
+
+	.test-container{
+
+		& h1{ padding: 20px; }
+
+	}
+
+}
+
+
+@media screen and (max-width: 650px){
+
+	body{ flex-direction: column; }
+
+	.test-container{
+
+		&.main{
+			top: 50%;
+			transform: translateX(-50%) translateY(-50%);
+		}
+
+		&.check{
+			left: 0;
+			top: 100px;
+		}
+
+		&.second{
+			right: 0;
+			bottom: 100px;
+		}
+
+	}
+
+
+}

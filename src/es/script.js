@@ -16,6 +16,27 @@ window.onload = function () {
 	const check  = $('.test-container.check');
 
 
+	// Toggle graphical test
+	const graphicalTestToggle = $('#graphicalTestToggle');
+
+	graphicalTestToggle.addEventListener('click', function(){
+
+		if(!L.graphicalTest.paused){
+
+			L.graphicalTest.pause();
+
+		} else {
+
+			L.graphicalTest.resume();
+			L.displayGraphicalTest();		
+
+		}
+
+	
+	});
+
+
+	//canvas set up
 	const mainCanvas  = $('#main-canvas');
 	const mainCtx     = mainCanvas.getContext('2d');
 	mainCanvas.width  = document.body.offsetWidth;
@@ -23,6 +44,7 @@ window.onload = function () {
 	mainCtx.font      = "1rem sans-serif";
 
 
+	//dragging flags
 	let draggingMain = false;
 	let draggingCheck = false;
 
@@ -32,25 +54,41 @@ window.onload = function () {
 	////////////
 	main.addEventListener('mousedown', function(){ draggingMain = true; });
 
+	main.addEventListener('touchstart', function(){ draggingMain = true; });
+
 
 	document.addEventListener('mouseup', function(){
 		if(draggingMain) { draggingMain = false; }
-		if(draggingCheck) { draggingCheck = false; }
 	});
 
 
-	window.addEventListener('mousemove', function(e){
+	document.addEventListener('touchend', function(){
+		if(draggingMain) { draggingMain = false; }
+	});
+
+
+	document.addEventListener('mousemove', function(e){
 
 		if(draggingMain){
-			main.style.top  = `${e.clientY - main.offsetHeight/2}px`;
+			main.style.top  = window.innerWidth >= 650 ?`${e.clientY - main.offsetHeight/2}px` : `${e.clientY}px`;
 			main.style.left  = `${e.clientX}px`;
 			L.watch();
 		}
 
 	});
 
+	document.addEventListener('touchmove', function(e){
 
-	window.addEventListener('resize', function(){ 
+		if(draggingMain){
+			main.style.top  = `${e.touches[0].clientY}px`;
+			main.style.left  = `${e.touches[0].clientX}px`;
+			L.watch();
+		}
+
+	});
+
+
+	window.addEventListener('resize', function(){
 
 		L.updateGraphicalTest();
 		L.watch();
@@ -68,17 +106,33 @@ window.onload = function () {
 
 	//Initialise the overlap objects
 	const M = new ActiveOverlapObject({
-		
-		html: main,
-		offset: {x: 30, y: 50},
 
-		//IMPORTANT: changing an element's css inline through JS is not really great, I used this just for the sake of this demo, I would recommend manipulating the object's CSS class intead
-		onApproach: function (main) { main.style.backgroundColor = "red"; },
-		onLeave: function (main) { main.style.backgroundColor = "#d9514e"; },
-		onExit: function(main, check){ check.style = null; },
+		html: main,
+		offset: window.innerWidth >= 768 ? { x: 30, y: 50 } : { x: 15, y: 25 },
+
+		//IMPORTANT: changing an element's css inline through JS is not really great thats's why recommend manipulating the object's CSS class instead
+		onApproach: function (main, check) {
+			main.classList.add('approaching');
+			check.classList.add('approaching');
+		},
+
+		onLeave: function (main, check) {
+			main.classList.remove('approaching');
+			check.classList.remove('approaching');
+		},
+
+		onExit: function(main, check) {
+			main.classList.remove('overlapping');
+			check.classList.remove('overlapping');
+		},
+
 		onOverlap: function (main, check) {
-			main.style.backgroundColor = "blue";
-			check.style.backgroundColor = "red";
+
+			main.classList.remove('approaching');
+			check.classList.remove('approaching');
+			
+			main.classList.add('overlapping');
+			check.classList.add('overlapping');
 		}
 
 	});
@@ -87,7 +141,7 @@ window.onload = function () {
 	const C = new BasicOverlapObject({
 
 		html: check,
-		offset: {x: 20, y: 40}
+		offset: window.innerWidth >= 768 ? {x: 20, y: 40} : { x: 10, y: 20 }
 
 	});
 
@@ -95,7 +149,7 @@ window.onload = function () {
 	const S = new BasicOverlapObject({
 
 		html: second,
-		offset: {x: 30, y: 20}
+		offset: window.innerWidth >= 768 ? {x: 30, y: 20} : { x: 15, y: 10 }
 
 	});
 
