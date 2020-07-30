@@ -52,8 +52,7 @@ window.onload = function () {
 
 
 	//dragging flags
-	let draggingMain = false;
-	let draggingCheck = false;
+	let draggingMain  = false;
 
 
 	////////////
@@ -141,33 +140,33 @@ window.onload = function () {
 	//check's callbacks
 	const checkCallbacks = {
 
-		onApproach: function (main, check) {
-			main.classList.add('approaching--check');
-			check.classList.add('approached');
+		onApproach: function (current, target) {
+			current.classList.add('approaching--check');
+			target.classList.add('approached');
 		},
 
-		onLeave: function (main, check) {
-			main.classList.remove('approaching--check');
-			check.classList.remove('approached');
+		onLeave: function (current, target) {
+			current.classList.remove('approaching--check');
+			target.classList.remove('approached');
 		},
 
-		onExit: function(main, check) {
+		onExit: function(current, target) {
 
-			main.classList.remove('overlapping--check');
-			check.classList.remove('overlapped');
+			current.classList.remove('overlapping--check');
+			target.classList.remove('overlapped');
 		
-			main.classList.add('approaching--check');
-			check.classList.add('approached');
+			current.classList.add('approaching--check');
+			target.classList.add('approached');
 		
 		},
 
-		onOverlap: function (main, check) {
+		onOverlap: function (current, target) {
 
-			main.classList.remove('approaching--check');
-			check.classList.remove('approached');
+			current.classList.remove('approaching--check');
+			target.classList.remove('approached');
 
-			main.classList.add('overlapping--check');
-			check.classList.add('overlapped');
+			current.classList.add('overlapping--check');
+			target.classList.add('overlapped');
 		}
 
 	};
@@ -176,33 +175,33 @@ window.onload = function () {
 	//check's callbacks
 	const secondCallbacks = {
 
-		onApproach: function (main, check) {
-			main.classList.add('approaching--second');
-			check.classList.add('approached');
+		onApproach: function (current, target) {
+			current.classList.add('approaching--second');
+			target.classList.add('approached');
 		},
 
-		onLeave: function (main, check) {
-			main.classList.remove('approaching--second');
-			check.classList.remove('approached');
+		onLeave: function (current, target) {
+			current.classList.remove('approaching--second');
+			target.classList.remove('approached');
 		},
 
-		onExit: function(main, check) {
+		onExit: function(current, target) {
 
-			main.classList.remove('overlapping--second');
-			check.classList.remove('overlapped');
+			current.classList.remove('overlapping--second');
+			target.classList.remove('overlapped');
 		
-			main.classList.add('approaching--second');
-			check.classList.add('approached');
+			current.classList.add('approaching--second');
+			target.classList.add('approached');
 		
 		},
 
-		onOverlap: function (main, check) {
+		onOverlap: function (current, target) {
 
-			main.classList.remove('approaching--second');
-			check.classList.remove('approached');
+			current.classList.remove('approaching--second');
+			target.classList.remove('approached');
 
-			main.classList.add('overlapping--second');
-			check.classList.add('overlapped');
+			current.classList.add('overlapping--second');
+			target.classList.add('overlapped');
 		}
 
 	};
@@ -218,7 +217,7 @@ window.onload = function () {
 	
 	//add the overlap object to be watched (could be more than one) to lappy
 	L.addActiveObject(M);
-
+	L.addActiveObject(M2);
 
 	//kick the demo off
 	L.watch();

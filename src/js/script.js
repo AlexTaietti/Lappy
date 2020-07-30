@@ -36,8 +36,7 @@ window.onload = function () {
   mainCanvas.height = document.body.offsetHeight;
   mainCtx.font = "1rem sans-serif"; //dragging flags
 
-  var draggingMain = false;
-  var draggingCheck = false; ////////////
+  var draggingMain = false; ////////////
   // EVENTS //
   ////////////
 
@@ -116,48 +115,48 @@ window.onload = function () {
   }); //check's callbacks
 
   var checkCallbacks = {
-    onApproach: function onApproach(main, check) {
-      main.classList.add('approaching--check');
-      check.classList.add('approached');
+    onApproach: function onApproach(current, target) {
+      current.classList.add('approaching--check');
+      target.classList.add('approached');
     },
-    onLeave: function onLeave(main, check) {
-      main.classList.remove('approaching--check');
-      check.classList.remove('approached');
+    onLeave: function onLeave(current, target) {
+      current.classList.remove('approaching--check');
+      target.classList.remove('approached');
     },
-    onExit: function onExit(main, check) {
-      main.classList.remove('overlapping--check');
-      check.classList.remove('overlapped');
-      main.classList.add('approaching--check');
-      check.classList.add('approached');
+    onExit: function onExit(current, target) {
+      current.classList.remove('overlapping--check');
+      target.classList.remove('overlapped');
+      current.classList.add('approaching--check');
+      target.classList.add('approached');
     },
-    onOverlap: function onOverlap(main, check) {
-      main.classList.remove('approaching--check');
-      check.classList.remove('approached');
-      main.classList.add('overlapping--check');
-      check.classList.add('overlapped');
+    onOverlap: function onOverlap(current, target) {
+      current.classList.remove('approaching--check');
+      target.classList.remove('approached');
+      current.classList.add('overlapping--check');
+      target.classList.add('overlapped');
     }
   }; //check's callbacks
 
   var secondCallbacks = {
-    onApproach: function onApproach(main, check) {
-      main.classList.add('approaching--second');
-      check.classList.add('approached');
+    onApproach: function onApproach(current, target) {
+      current.classList.add('approaching--second');
+      target.classList.add('approached');
     },
-    onLeave: function onLeave(main, check) {
-      main.classList.remove('approaching--second');
-      check.classList.remove('approached');
+    onLeave: function onLeave(current, target) {
+      current.classList.remove('approaching--second');
+      target.classList.remove('approached');
     },
-    onExit: function onExit(main, check) {
-      main.classList.remove('overlapping--second');
-      check.classList.remove('overlapped');
-      main.classList.add('approaching--second');
-      check.classList.add('approached');
+    onExit: function onExit(current, target) {
+      current.classList.remove('overlapping--second');
+      target.classList.remove('overlapped');
+      current.classList.add('approaching--second');
+      target.classList.add('approached');
     },
-    onOverlap: function onOverlap(main, check) {
-      main.classList.remove('approaching--second');
-      check.classList.remove('approached');
-      main.classList.add('overlapping--second');
-      check.classList.add('overlapped');
+    onOverlap: function onOverlap(current, target) {
+      current.classList.remove('approaching--second');
+      target.classList.remove('approached');
+      current.classList.add('overlapping--second');
+      target.classList.add('overlapped');
     }
   };
   M.addTrackedObject(C, checkCallbacks);
@@ -165,7 +164,8 @@ window.onload = function () {
 
   var L = new _Lappy.Lappy(); //add the overlap object to be watched (could be more than one) to lappy
 
-  L.addActiveObject(M); //kick the demo off
+  L.addActiveObject(M);
+  L.addActiveObject(M2); //kick the demo off
 
   L.watch();
 };
