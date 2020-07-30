@@ -119,31 +119,6 @@ window.onload = function () {
 		html: main,
 		offset: window.innerWidth >= 768 ? { x: 30, y: 50 } : { x: 15, y: 25 },
 
-		//IMPORTANT: changing an element's css inline through JS is not really great thats's why recommend manipulating the object's CSS class instead
-		onApproach: function (main, check) {
-			main.classList.add('approaching');
-			check.classList.add('approaching');
-		},
-
-		onLeave: function (main, check) {
-			main.classList.remove('approaching');
-			check.classList.remove('approaching');
-		},
-
-		onExit: function(main, check) {
-			main.classList.remove('overlapping');
-			check.classList.remove('overlapping');
-		},
-
-		onOverlap: function (main, check) {
-
-			main.classList.remove('approaching');
-			check.classList.remove('approaching');
-			
-			main.classList.add('overlapping');
-			check.classList.add('overlapping');
-		}
-
 	});
 
 
@@ -163,8 +138,78 @@ window.onload = function () {
 	});
 
 
-	M.addTrackedObject(C);
-	M.addTrackedObject(S);
+	//check's callbacks
+	const checkCallbacks = {
+
+		onApproach: function (main, check) {
+			main.classList.add('approaching--check');
+			check.classList.add('approached');
+		},
+
+		onLeave: function (main, check) {
+			main.classList.remove('approaching--check');
+			check.classList.remove('approached');
+		},
+
+		onExit: function(main, check) {
+
+			main.classList.remove('overlapping--check');
+			check.classList.remove('overlapped');
+		
+			main.classList.add('approaching--check');
+			check.classList.add('approached');
+		
+		},
+
+		onOverlap: function (main, check) {
+
+			main.classList.remove('approaching--check');
+			check.classList.remove('approached');
+
+			main.classList.add('overlapping--check');
+			check.classList.add('overlapped');
+		}
+
+	};
+
+
+	//check's callbacks
+	const secondCallbacks = {
+
+		onApproach: function (main, check) {
+			main.classList.add('approaching--second');
+			check.classList.add('approached');
+		},
+
+		onLeave: function (main, check) {
+			main.classList.remove('approaching--second');
+			check.classList.remove('approached');
+		},
+
+		onExit: function(main, check) {
+
+			main.classList.remove('overlapping--second');
+			check.classList.remove('overlapped');
+		
+			main.classList.add('approaching--second');
+			check.classList.add('approached');
+		
+		},
+
+		onOverlap: function (main, check) {
+
+			main.classList.remove('approaching--second');
+			check.classList.remove('approached');
+
+			main.classList.add('overlapping--second');
+			check.classList.add('overlapped');
+		}
+
+	};
+
+
+	M.addTrackedObject(C, checkCallbacks);
+	M.addTrackedObject(S, secondCallbacks);
 
 
 	//initialise Lappy
