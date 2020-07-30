@@ -217,7 +217,6 @@ window.onload = function () {
 	
 	//add the overlap object to be watched (could be more than one) to lappy
 	L.addActiveObject(M);
-	L.addActiveObject(M2);
 
 	//kick the demo off
 	L.watch();
