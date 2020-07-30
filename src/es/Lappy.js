@@ -36,7 +36,7 @@ class GraphicalTest {
 		if (target.offset.x || target.offset.y) this.drawApproachArea(target);
 		if(target.active && target.trackedObjects.length){
 			for(i = 0; i < target.trackedObjects.length; i ++){
-				this.display(target.trackedObjects[i]);
+				this.display(target.trackedObjects[i].object);
 			}
 		}
 	}
@@ -99,22 +99,8 @@ class ActiveOverlapObject extends BasicOverlapObject {
 
 		super(options);
 
-		//default callbacks
-		const defaults = {
-			onApproach: function  (main, check) { console.log(`I <${main.classList}> am approaching something!`); },
-			onOverlap:  function  (main, check) { console.log(`I <${main.classList}> am overlapping something!`); },
-			onExit:     function  (main, check) { console.log(`I <${main.classList}> am exiting something!`); },
-			onLeave:    function  (main, check) { console.log(`I <${main.classList}> am leaving something!`); }
-		};
-
 		//this boi is active
 		this.active = true;
-
-		//callbacks
-		this.onOverlap  = options.onOverlap  || defaults.onOverlap;
-		this.onApproach = options.onApproach || defaults.onApproach;
-		this.onExit     = options.onExit     || defaults.onExit;
-		this.onLeave    = options.onLeave    || defaults.onLeave;
 
 		//passive objects this boiii can interact with
 		this.trackedObjects = [];
@@ -125,12 +111,27 @@ class ActiveOverlapObject extends BasicOverlapObject {
 		this.htmlCoordinates = getInnerCoords(this.HTML);
 		this.coordinates     = getOuterCoords(this.HTML, this.offset);
 		for(i = 0; i < this.trackedObjects.length; i++) {
-			this.trackedObjects[i].updateCoordinates();
+			this.trackedObjects[i].object.updateCoordinates();
 		}
 	}
 
-	addTrackedObject (overlapObject) {
-		this.trackedObjects.push(overlapObject);
+	addTrackedObject (overlapObject, callbacks = {}) {
+
+		//default callbacks
+		const defaults = {
+			onApproach: function  (main, check) { console.log(`I <${main.classList}> am approaching something!`); },
+			onOverlap:  function  (main, check) { console.log(`I <${main.classList}> am overlapping something!`); },
+			onExit:     function  (main, check) { console.log(`I <${main.classList}> am exiting something!`); },
+			onLeave:    function  (main, check) { console.log(`I <${main.classList}> am leaving something!`); }
+		};
+
+		this.trackedObjects.push({
+
+			object: overlapObject,
+			callbacks: callbacks || defaults
+
+		});
+
 	}
 
 }
@@ -199,29 +200,29 @@ class Lappy {
 
 	//if neither of the two objects involved in the overlap have an offset property the only two callbacks executed will be "onOverlap" and "onLeave" ("definitely something I'll fix soon!")
 	checkOverlap (main, check) {
-		overlap = this.calculateOverlap(main, check);
+		overlap = this.calculateOverlap(main, check.object);
 		if(overlap.x && overlap.y){
 			if(Math.abs(overlap.x) === Math.abs(overlap.y)){
 				if(overlap.x % 2 === 0 && overlap.y % 2 === 0) { 
-					if( ((overlap.x + check.lastOverlapData.x) % 3 === 0 && overlap.x * check.lastOverlapData.x > 0 && overlap.x % 2 === 0) || ((overlap.y + check.lastOverlapData.y) % 3 === 0 && overlap.y * check.lastOverlapData.y > 0 && overlap.y % 2 === 0) ){
-						main.onExit(main.HTML, check.HTML);
+					if( ((overlap.x + check.object.lastOverlapData.x) % 3 === 0 && overlap.x * check.object.lastOverlapData.x > 0 && overlap.x % 2 === 0) || ((overlap.y + check.object.lastOverlapData.y) % 3 === 0 && overlap.y * check.object.lastOverlapData.y > 0 && overlap.y % 2 === 0) ){
+						check.callbacks.onExit(main.HTML, check.object.HTML);
 					} else {
-						main.onApproach(main.HTML, check.HTML);
+						check.callbacks.onApproach(main.HTML, check.object.HTML);
 					}
 				} else {
-					main.onOverlap(main.HTML, check.HTML);
+					check.callbacks.onOverlap(main.HTML, check.object.HTML);
 				}
 			} else if(overlap.x % 2 === 0 || overlap.y % 2 === 0) {
-				if( ((overlap.x + check.lastOverlapData.x) % 3 === 0 && overlap.x * check.lastOverlapData.x > 0 && overlap.x % 2 === 0) || ((overlap.y + check.lastOverlapData.y) % 3 === 0 && overlap.y * check.lastOverlapData.y > 0 && overlap.y % 2 === 0) ){
-					main.onExit(main.HTML, check.HTML);
+				if( ((overlap.x + check.object.lastOverlapData.x) % 3 === 0 && overlap.x * check.object.lastOverlapData.x > 0 && overlap.x % 2 === 0) || ((overlap.y + check.object.lastOverlapData.y) % 3 === 0 && overlap.y * check.object.lastOverlapData.y > 0 && overlap.y % 2 === 0) ){
+					check.callbacks.onExit(main.HTML, check.object.HTML);
 				} else {
-					main.onApproach(main.HTML, check.HTML);
+					check.callbacks.onApproach(main.HTML, check.object.HTML);
 				}
 			}
-		} else if((!overlap.x || !overlap.y) && (check.lastOverlapData.x && check.lastOverlapData.y)) {
-			main.onLeave(main.HTML, check.HTML);
+		} else if((!overlap.x || !overlap.y) && (check.object.lastOverlapData.x && check.object.lastOverlapData.y)) {
+			check.callbacks.onLeave(main.HTML, check.object.HTML);
 		}
-		check.lastOverlapData = overlap;
+		check.object.lastOverlapData = overlap;
 	}
 
 
