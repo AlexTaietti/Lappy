@@ -35,7 +35,7 @@ class GraphicalTest {
 		this.displayCoordinates(target);
 		if (target.offset.x || target.offset.y) this.drawApproachArea(target);
 		if(target.active && target.trackedObjects.length){
-			for(i = 0; i < target.trackedObjects.length; i ++){
+			for(let i = 0; i < target.trackedObjects.length; i ++){
 				this.display(target.trackedObjects[i].object);
 			}
 		}
@@ -79,7 +79,6 @@ class BasicOverlapObject {
 		this.active          = false;
 		this.htmlCoordinates = getInnerCoords(completeOptions.html);
 		this.coordinates     = getOuterCoords(completeOptions.html, completeOptions.offset);
-		this.lastOverlapData = {x: undefined, y: undefined};
 	
 	}
 
@@ -110,7 +109,7 @@ class ActiveOverlapObject extends BasicOverlapObject {
 	updateCoordinates () {
 		this.htmlCoordinates = getInnerCoords(this.HTML);
 		this.coordinates     = getOuterCoords(this.HTML, this.offset);
-		for(i = 0; i < this.trackedObjects.length; i++) {
+		for(let i = 0; i < this.trackedObjects.length; i++) {
 			this.trackedObjects[i].object.updateCoordinates();
 		}
 	}
@@ -128,7 +127,8 @@ class ActiveOverlapObject extends BasicOverlapObject {
 		this.trackedObjects.push({
 
 			object: overlapObject,
-			callbacks: callbacks || defaults
+			callbacks: callbacks || defaults,
+			lastOverlapData: {x: undefined, y: undefined}
 
 		});
 
@@ -179,7 +179,7 @@ class Lappy {
 
 
 	updateCoordinates () {
-		for(i = 0; i < this.overlapObjects.length; i++){
+		for(let i = 0; i < this.overlapObjects.length; i++){
 			this.overlapObjects[i].updateCoordinates();
 		}
 	}
@@ -187,8 +187,8 @@ class Lappy {
 
 	calculateOverlap (main, check){
 
-		overlapX = this.checkOverlapX(main, check);
-		overlapY = this.checkOverlapY(main, check);
+		let overlapX = this.checkOverlapX(main, check);
+		let overlapY = this.checkOverlapY(main, check);
 
 		return {
 			x: main.axis.x ? overlapX : overlapY,
@@ -200,11 +200,11 @@ class Lappy {
 
 	//if neither of the two objects involved in the overlap have an offset property the only two callbacks executed will be "onOverlap" and "onLeave" ("definitely something I'll fix soon!")
 	checkOverlap (main, check) {
-		overlap = this.calculateOverlap(main, check.object);
+		let overlap = this.calculateOverlap(main, check.object);
 		if(overlap.x && overlap.y){
 			if(Math.abs(overlap.x) === Math.abs(overlap.y)){
 				if(overlap.x % 2 === 0 && overlap.y % 2 === 0) { 
-					if( ((overlap.x + check.object.lastOverlapData.x) % 3 === 0 && overlap.x * check.object.lastOverlapData.x > 0 && overlap.x % 2 === 0) || ((overlap.y + check.object.lastOverlapData.y) % 3 === 0 && overlap.y * check.object.lastOverlapData.y > 0 && overlap.y % 2 === 0) ){
+					if( ((overlap.x + check.lastOverlapData.x) % 3 === 0 && overlap.x * check.lastOverlapData.x > 0 && overlap.x % 2 === 0) || ((overlap.y + check.lastOverlapData.y) % 3 === 0 && overlap.y * check.lastOverlapData.y > 0 && overlap.y % 2 === 0) ){
 						check.callbacks.onExit(main.HTML, check.object.HTML);
 					} else {
 						check.callbacks.onApproach(main.HTML, check.object.HTML);
@@ -213,23 +213,23 @@ class Lappy {
 					check.callbacks.onOverlap(main.HTML, check.object.HTML);
 				}
 			} else if(overlap.x % 2 === 0 || overlap.y % 2 === 0) {
-				if( ((overlap.x + check.object.lastOverlapData.x) % 3 === 0 && overlap.x * check.object.lastOverlapData.x > 0 && overlap.x % 2 === 0) || ((overlap.y + check.object.lastOverlapData.y) % 3 === 0 && overlap.y * check.object.lastOverlapData.y > 0 && overlap.y % 2 === 0) ){
+				if( ((overlap.x + check.lastOverlapData.x) % 3 === 0 && overlap.x * check.lastOverlapData.x > 0 && overlap.x % 2 === 0) || ((overlap.y + check.lastOverlapData.y) % 3 === 0 && overlap.y * check.lastOverlapData.y > 0 && overlap.y % 2 === 0) ){
 					check.callbacks.onExit(main.HTML, check.object.HTML);
 				} else {
 					check.callbacks.onApproach(main.HTML, check.object.HTML);
 				}
 			}
-		} else if((!overlap.x || !overlap.y) && (check.object.lastOverlapData.x && check.object.lastOverlapData.y)) {
+		} else if((!overlap.x || !overlap.y) && (check.lastOverlapData.x && check.lastOverlapData.y)) {
 			check.callbacks.onLeave(main.HTML, check.object.HTML);
 		}
-		check.object.lastOverlapData = overlap;
+		check.lastOverlapData = overlap;
 	}
 
 
 	displayGraphicalTest () {
 
 		this.graphicalTest.clearTestDisplay();
-		for(i = 0; i < this.overlapObjects.length; i++){
+		for(let i = 0; i < this.overlapObjects.length; i++){
 			this.graphicalTest.display(this.overlapObjects[i]);
 		}
 
@@ -255,9 +255,10 @@ class Lappy {
 			this.displayGraphicalTest();
 		}
 		
-		for(i = 0; i < this.overlapObjects.length; i++){
-			for(r = 0; r < this.overlapObjects[i].trackedObjects.length; r++){
-				this.checkOverlap(this.overlapObjects[i], this.overlapObjects[i].trackedObjects[r]);
+		for(let i = 0; i < this.overlapObjects.length; i++){
+			let currentActive = this.overlapObjects[i];
+			for(let r = 0; r < currentActive.trackedObjects.length; r++){
+				this.checkOverlap(currentActive, currentActive.trackedObjects[r]);
 			}
 		}
 	
@@ -273,14 +274,8 @@ class Lappy {
 ///////////////////////////
 
 
-let i; // let's all take a moment to appreciate our beloved "i" variable, for without it no loop would feel quite the same
-
-
-let coords, prop, r, w, h, overlap, overlapX, overlapY;
-
-
 function getInnerCoords (element) {
-	coords = [], w = element.offsetWidth, h = element.offsetHeight;
+	let coords = [], w = element.offsetWidth, h = element.offsetHeight;
 	coords[0] = {
 		y: element.getBoundingClientRect().y + window.scrollY,
 		x: element.getBoundingClientRect().x + window.scrollX
@@ -302,7 +297,7 @@ function getInnerCoords (element) {
 
 
 function getOuterCoords(element, offset = 0) {
-	coords = [], w = element.offsetWidth, h = element.offsetHeight;
+	let coords = [], w = element.offsetWidth, h = element.offsetHeight;
 	coords[0] = {
 		y: element.getBoundingClientRect().y + window.scrollY - offset.y,
 		x: element.getBoundingClientRect().x + window.scrollX - offset.x
@@ -325,7 +320,7 @@ function getOuterCoords(element, offset = 0) {
 
 
 function mergeObjects (target, object, deep) {
-	for(prop in target){
+	for(let prop in target){
 		if(object.hasOwnProperty(prop)){
 			if(typeof object[prop] === "object"){
 				if(deep){
