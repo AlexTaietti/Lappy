@@ -117,7 +117,7 @@ window.onload = function () {
 	const M = new ActiveOverlapObject({
 
 		html: main,
-		axis: {x: false, y: false },
+		axis: {x: true, y: true },
 		offset: window.innerWidth >= 768 ? { x: 30, y: 50 } : { x: 15, y: 25 },
 
 	});

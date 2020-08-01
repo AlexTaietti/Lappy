@@ -86,8 +86,8 @@ window.onload = function () {
   var M = new _Lappy.ActiveOverlapObject({
     html: main,
     axis: {
-      x: false,
-      y: false
+      x: true,
+      y: true
     },
     offset: window.innerWidth >= 768 ? {
       x: 30,
