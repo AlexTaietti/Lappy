@@ -11,10 +11,20 @@ window.onload = function () {
   var $$ = document.querySelectorAll.bind(document);
   var main = $('.test-container.main');
   var second = $('.test-container.second');
-  var check = $('.test-container.check'); // Toggle graphical test
+  var testToggle = $('#graphicalTestToggle');
+  var check = $('.test-container.check'); // canvas set up
 
-  var graphicalTestToggle = $('#graphicalTestToggle');
-  graphicalTestToggle.addEventListener('click', function () {
+  var mainCanvas = $('#main-canvas');
+  var mainCtx = mainCanvas.getContext('2d');
+  mainCanvas.width = document.body.offsetWidth;
+  mainCanvas.height = document.body.offsetHeight;
+  mainCtx.font = '1rem sans-serif'; // dragging flag
+
+  var draggingMain = false; ////////////
+  // EVENTS //
+  ////////////
+
+  testToggle.addEventListener('click', function () {
     if (!L.graphicalTest) {
       L.addGraphicalTest({
         context: mainCtx
@@ -28,18 +38,7 @@ window.onload = function () {
         L.displayGraphicalTest();
       }
     }
-  }); //canvas set up
-
-  var mainCanvas = $('#main-canvas');
-  var mainCtx = mainCanvas.getContext('2d');
-  mainCanvas.width = document.body.offsetWidth;
-  mainCanvas.height = document.body.offsetHeight;
-  mainCtx.font = "1rem sans-serif"; //dragging flags
-
-  var draggingMain = false; ////////////
-  // EVENTS //
-  ////////////
-
+  });
   main.addEventListener('mousedown', function () {
     draggingMain = true;
   });
@@ -72,7 +71,8 @@ window.onload = function () {
   });
   window.addEventListener('resize', function () {
     if (L.graphicalTest) {
-      L.updateGraphicalTest();
+      L.resizeGraphicalTestCanvas();
+      L.displayGraphicalTest();
       L.watch();
     }
   });
@@ -81,10 +81,14 @@ window.onload = function () {
   }); ////////////////
   // START DEMO //
   ////////////////
-  //Initialise the overlap objects
+  // initialise the overlap objects
 
   var M = new _Lappy.ActiveOverlapObject({
     html: main,
+    axis: {
+      x: false,
+      y: false
+    },
     offset: window.innerWidth >= 768 ? {
       x: 30,
       y: 50
@@ -112,7 +116,7 @@ window.onload = function () {
       x: 15,
       y: 10
     }
-  }); //check's callbacks
+  }); // here are the callbacks for the left most basic object
 
   var checkCallbacks = {
     onApproach: function onApproach(current, target) {
@@ -135,7 +139,7 @@ window.onload = function () {
       current.classList.add('overlapping--check');
       target.classList.add('overlapped');
     }
-  }; //check's callbacks
+  }; // and here are the ones for the right most basic object instead
 
   var secondCallbacks = {
     onApproach: function onApproach(current, target) {
@@ -158,13 +162,14 @@ window.onload = function () {
       current.classList.add('overlapping--second');
       target.classList.add('overlapped');
     }
-  };
+  }; // add the basic objects C & S to M (aka the active object) in order to track their interactions
+
   M.addTrackedObject(C, checkCallbacks);
-  M.addTrackedObject(S, secondCallbacks); //initialise Lappy
+  M.addTrackedObject(S, secondCallbacks); // initialise Lappy
 
-  var L = new _Lappy.Lappy(); //add the overlap object to be watched (could be more than one) to lappy
+  var L = new _Lappy.Lappy(); // add the overlap object to be watched (could be more than one) to lappy
 
-  L.addActiveObject(M); //kick the demo off
+  L.addActiveObject(M); // kick off the demo!
 
   L.watch();
 };

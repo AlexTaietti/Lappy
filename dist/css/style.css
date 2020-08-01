@@ -53,11 +53,6 @@ canvas {
 .test-container {
   display: block;
   cursor: pointer;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
-  border: 1px solid black;
   transition-property: background-color;
   transition-duration: 0.1s; }
   .test-container.main {

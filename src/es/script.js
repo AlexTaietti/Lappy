@@ -1,64 +1,62 @@
 import {BasicOverlapObject, graphicalTest, ActiveOverlapObject, Lappy} from './Lappy.js'; //import Lappy
 
 
+
 window.onload = function () {
+
 
 
 	////////////
 	// THINGS //
 	////////////
+
+
 	const $  = document.querySelector.bind(document);
 	const $$ = document.querySelectorAll.bind(document);
 
-
-	const main   = $('.test-container.main');
-	const second = $('.test-container.second');
-	const check  = $('.test-container.check');
-
-
-	// Toggle graphical test
-	const graphicalTestToggle = $('#graphicalTestToggle');
-
-	graphicalTestToggle.addEventListener('click', function(){
-
-		if(!L.graphicalTest) {
-			L.addGraphicalTest({ context: mainCtx });
-			L.displayGraphicalTest();
-		} else {
-
-			if(!L.graphicalTest.paused){
-
-				L.graphicalTest.pause();
-
-			} else {
-
-				L.graphicalTest.resume();
-				L.displayGraphicalTest();		
-
-			}	
-
-		}
-
-	
-	});
+	const main       = $('.test-container.main');
+	const second     = $('.test-container.second');
+	const testToggle = $('#graphicalTestToggle');
+	const check      = $('.test-container.check');
 
 
-	//canvas set up
+	// canvas set up
 	const mainCanvas  = $('#main-canvas');
 	const mainCtx     = mainCanvas.getContext('2d');
+
 	mainCanvas.width  = document.body.offsetWidth;
 	mainCanvas.height = document.body.offsetHeight;
-	mainCtx.font      = "1rem sans-serif";
+	mainCtx.font      = '1rem sans-serif';
 
-
-	//dragging flags
+	// dragging flag
 	let draggingMain  = false;
+
 
 
 	////////////
 	// EVENTS //
 	////////////
+
+
+	testToggle.addEventListener('click', function(){
+
+		if(!L.graphicalTest) {
+			L.addGraphicalTest({ context: mainCtx });
+			L.displayGraphicalTest();
+		} else {
+			if(!L.graphicalTest.paused){
+				L.graphicalTest.pause();
+			} else {
+				L.graphicalTest.resume();
+				L.displayGraphicalTest();		
+			}
+		}
+	
+	});
+
+
 	main.addEventListener('mousedown', function(){ draggingMain = true; });
+
 
 	main.addEventListener('touchstart', function(){ draggingMain = true; });
 
@@ -83,6 +81,7 @@ window.onload = function () {
 
 	});
 
+
 	document.addEventListener('touchmove', function(e){
 
 		if(draggingMain){
@@ -97,7 +96,8 @@ window.onload = function () {
 	window.addEventListener('resize', function(){
 
 		if(L.graphicalTest){
-			L.updateGraphicalTest();
+			L.resizeGraphicalTestCanvas();
+			L.displayGraphicalTest();
 			L.watch();
 		}
 
@@ -107,15 +107,17 @@ window.onload = function () {
 	document.addEventListener('scroll', function(){ L.watch(); });
 
 
+
 	////////////////
 	// START DEMO //
 	////////////////
 
 
-	//Initialise the overlap objects
+	// initialise the overlap objects
 	const M = new ActiveOverlapObject({
 
 		html: main,
+		axis: {x: false, y: false },
 		offset: window.innerWidth >= 768 ? { x: 30, y: 50 } : { x: 15, y: 25 },
 
 	});
@@ -137,7 +139,7 @@ window.onload = function () {
 	});
 
 
-	//check's callbacks
+	// here are the callbacks for the left most basic object
 	const checkCallbacks = {
 
 		onApproach: function (current, target) {
@@ -172,7 +174,7 @@ window.onload = function () {
 	};
 
 
-	//check's callbacks
+	// and here are the ones for the right most basic object instead
 	const secondCallbacks = {
 
 		onApproach: function (current, target) {
@@ -207,18 +209,17 @@ window.onload = function () {
 	};
 
 
+	// add the basic objects C & S to M (aka the active object) in order to track their interactions
 	M.addTrackedObject(C, checkCallbacks);
 	M.addTrackedObject(S, secondCallbacks);
 
-
-	//initialise Lappy
+	// initialise Lappy
 	const L = new Lappy();
-
 	
-	//add the overlap object to be watched (could be more than one) to lappy
+	// add the overlap object to be watched (could be more than one) to lappy
 	L.addActiveObject(M);
 
-	//kick the demo off
+	// kick off the demo!
 	L.watch();
 
 
