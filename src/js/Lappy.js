@@ -33,11 +33,19 @@ var GraphicalTest = /*#__PURE__*/function () {
 
     _classCallCheck(this, GraphicalTest);
 
-    this.context = options.context || undefined;
-    this.approachColor = options.approachStroke || 'red';
-    this.approachFill = options.approachFill || 'red';
+    var defaults = {
+      context: undefined,
+      approachColor: 'red'
+    };
+    var completeOptions = mergeObjects(defaults, options); // context options (more coming soon!)
+
+    this.context = completeOptions.context;
+    this.approachColor = completeOptions.approachColor; // paused flag
+
     this.paused = false;
-  }
+  } // display the coordinates of each vertex of the target (aka the current element) relative to the document's top left corner
+  // basically the space used to represent the elements is the inverse first quadrant of a 2D plane
+
 
   _createClass(GraphicalTest, [{
     key: "displayCoordinates",
@@ -51,7 +59,8 @@ var GraphicalTest = /*#__PURE__*/function () {
       this.context.fillText("x:".concat(~~target.htmlCoordinates[2].x, ", y:").concat(~~target.htmlCoordinates[2].y), ~~target.htmlCoordinates[2].x, ~~target.htmlCoordinates[2].y + 15);
       this.context.fillText("x:".concat(~~target.htmlCoordinates[3].x, ", y:").concat(~~target.htmlCoordinates[3].y), ~~target.htmlCoordinates[3].x, ~~target.htmlCoordinates[3].y + 15);
       this.context.closePath();
-    }
+    } //draw a dashed line on the outer area of the object
+
   }, {
     key: "drawApproachArea",
     value: function drawApproachArea(target) {
@@ -59,11 +68,10 @@ var GraphicalTest = /*#__PURE__*/function () {
       this.context.strokeStyle = this.approachColor;
       this.context.setLineDash([5, 10]);
       this.context.strokeRect(target.coordinates[0].x, target.coordinates[0].y, target.coordinates[2].x - target.coordinates[0].x, target.coordinates[2].y - target.coordinates[0].y);
-      this.context.moveTo(0, target.offset);
-      this.context.lineTo(window.innerWidth, target.offset);
       this.context.stroke();
       this.context.closePath();
-    }
+    } // display the target on the graphical test canvas
+
   }, {
     key: "display",
     value: function display(target) {
@@ -75,18 +83,21 @@ var GraphicalTest = /*#__PURE__*/function () {
           this.display(target.trackedObjects[i].object);
         }
       }
-    }
+    } // clear the graphicla test's display
+
   }, {
     key: "clearTestDisplay",
     value: function clearTestDisplay() {
       this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
-    }
+    } //pause graphical test
+
   }, {
     key: "pause",
     value: function pause() {
       this.clearTestDisplay();
       this.paused = true;
-    }
+    } //resume graphical test
+
   }, {
     key: "resume",
     value: function resume() {
@@ -116,26 +127,23 @@ var BasicOverlapObject = /*#__PURE__*/function () {
         y: true
       }
     };
-    var completeOptions = options ? mergeObjects(defaults, options) : defaults; //html
+    var completeOptions = options ? mergeObjects(defaults, options) : defaults; // Object's HTML
 
-    this.HTML = completeOptions.html;
-    this.htmlClass = completeOptions.html.classList; //object data
+    this.HTML = completeOptions.html; // object data
 
-    this.offset = !isNaN(completeOptions.offset) && completeOptions.offset > 0 ? {
-      x: 0,
-      y: completeOptions.offset
-    } : completeOptions.offset;
+    this.offset = completeOptions.offset;
     this.axis = completeOptions.axis;
     this.active = false;
     this.htmlCoordinates = getInnerCoords(completeOptions.html);
-    this.coordinates = getOuterCoords(completeOptions.html, completeOptions.offset);
-  }
+    this.coordinates = getOuterCoords(completeOptions.html, completeOptions.offset, completeOptions.axis);
+  } // update both the coordinates of the actual HTML element as well as the imaginary offset bounding box surrounding it
+
 
   _createClass(BasicOverlapObject, [{
     key: "updateCoordinates",
     value: function updateCoordinates() {
       this.htmlCoordinates = getInnerCoords(this.HTML);
-      this.coordinates = getOuterCoords(this.HTML, this.offset);
+      this.coordinates = getOuterCoords(this.HTML, this.offset, this.axis);
     }
   }]);
 
@@ -156,24 +164,27 @@ var ActiveOverlapObject = /*#__PURE__*/function (_BasicOverlapObject) {
 
     _classCallCheck(this, ActiveOverlapObject);
 
-    _this = _super.call(this, options); //this boi is active
+    // invoke super class constructor (aka BasicOverlapObject's constructor)
+    _this = _super.call(this, options); // this boi is active
 
-    _this.active = true; //passive objects this boiii can interact with
+    _this.active = true; // passive objects this boiii can interact with
 
     _this.trackedObjects = [];
     return _this;
-  }
+  } // update the active element's coordinates as well as the coordinates of the basic objects it may interact with
+
 
   _createClass(ActiveOverlapObject, [{
     key: "updateCoordinates",
     value: function updateCoordinates() {
       this.htmlCoordinates = getInnerCoords(this.HTML);
-      this.coordinates = getOuterCoords(this.HTML, this.offset);
+      this.coordinates = getOuterCoords(this.HTML, this.offset, this.axis);
 
       for (var i = 0; i < this.trackedObjects.length; i++) {
         this.trackedObjects[i].object.updateCoordinates();
       }
-    }
+    } // add a new basic object this active one can interact with
+
   }, {
     key: "addTrackedObject",
     value: function addTrackedObject(overlapObject) {
@@ -181,21 +192,21 @@ var ActiveOverlapObject = /*#__PURE__*/function (_BasicOverlapObject) {
       //default callbacks
       var defaults = {
         onApproach: function onApproach(main, check) {
-          console.log("I <".concat(main.classList, "> am approaching something!"));
+          return 1;
         },
         onOverlap: function onOverlap(main, check) {
-          console.log("I <".concat(main.classList, "> am overlapping something!"));
+          return 1;
         },
         onExit: function onExit(main, check) {
-          console.log("I <".concat(main.classList, "> am exiting something!"));
+          return 1;
         },
         onLeave: function onLeave(main, check) {
-          console.log("I <".concat(main.classList, "> am leaving something!"));
+          return 1;
         }
       };
       this.trackedObjects.push({
         object: overlapObject,
-        callbacks: callbacks || defaults,
+        callbacks: mergeObjects(defaults, callbacks),
         lastOverlapData: {
           x: undefined,
           y: undefined
@@ -217,18 +228,20 @@ var Lappy = /*#__PURE__*/function () {
 
     if (options.graphicalTest) this.graphicalTest = new GraphicalTest(options.graphicalTest);
     this.overlapObjects = [];
-  }
+  } // add one more active object to be tracked by Lappy
+
 
   _createClass(Lappy, [{
     key: "addActiveObject",
     value: function addActiveObject(newOverlapObject) {
       this.overlapObjects.push(newOverlapObject);
-    }
+    } // resize the graphical test canvas' dimensions (to be called whenever the window is resized)
+
   }, {
-    key: "updateGraphicalTest",
-    value: function updateGraphicalTest() {
-      this.graphicalTest.context.canvas.width = document.body.offsetWidth;
-      this.graphicalTest.context.canvas.height = document.body.offsetHeight;
+    key: "resizeGraphicalTestCanvas",
+    value: function resizeGraphicalTestCanvas() {
+      this.graphicalTest.context.canvas.width = getDocumentWidth();
+      this.graphicalTest.context.canvas.height = getDocumentHeight();
     }
   }, {
     key: "checkOverlapY",
@@ -271,14 +284,16 @@ var Lappy = /*#__PURE__*/function () {
       }
 
       return 0;
-    }
+    } // update every active object's coordinates (which will in turn update every one of its basic objects' coordinates)
+
   }, {
     key: "updateCoordinates",
     value: function updateCoordinates() {
       for (var i = 0; i < this.overlapObjects.length; i++) {
         this.overlapObjects[i].updateCoordinates();
       }
-    }
+    } // detect any overlap between a target object (active) and a check (basic)
+
   }, {
     key: "calculateOverlap",
     value: function calculateOverlap(main, check) {
@@ -288,7 +303,7 @@ var Lappy = /*#__PURE__*/function () {
         x: main.axis.x ? overlapX : overlapY,
         y: main.axis.y ? overlapY : overlapX
       };
-    } //if neither of the two objects involved in the overlap have an offset property the only two callbacks executed will be "onOverlap" and "onLeave" ("definitely something I'll fix soon!")
+    } // for now if neither of the two objects involved in the overlap have an offset property the only two callbacks executed will be "onOverlap" and "onLeave" ("definitely something I'll fix soon!")
 
   }, {
     key: "checkOverlap",
@@ -322,21 +337,25 @@ var Lappy = /*#__PURE__*/function () {
   }, {
     key: "displayGraphicalTest",
     value: function displayGraphicalTest() {
+      this.updateCoordinates();
       this.graphicalTest.clearTestDisplay();
 
       for (var i = 0; i < this.overlapObjects.length; i++) {
         this.graphicalTest.display(this.overlapObjects[i]);
       }
-    }
+    } // initialise a graphical test for Lappy's current instance
+
   }, {
     key: "addGraphicalTest",
     value: function addGraphicalTest(graphicalTestData) {
       if (!this.graphicalTest) {
         this.graphicalTest = new GraphicalTest(graphicalTestData);
+        this.resizeGraphicalTestCanvas();
       } else {
         throw 'Graphical test already initialised!';
       }
-    }
+    } // This is how the Lappy dooo...
+
   }, {
     key: "watch",
     value: function watch() {
@@ -360,6 +379,7 @@ var Lappy = /*#__PURE__*/function () {
 }(); ///////////////////////////
 // FUNCTIONS & VARIABLES //
 ///////////////////////////
+// get an HTML element's variables
 
 
 exports.Lappy = Lappy;
@@ -385,31 +405,37 @@ function getInnerCoords(element) {
     x: element.getBoundingClientRect().x + window.scrollX
   };
   return coords;
-}
+} // get an overlapObject's outer apprach area's coordinates
+
 
 function getOuterCoords(element) {
   var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+  var axis = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {
+    x: undefined,
+    y: undefined
+  };
   var coords = [],
       w = element.offsetWidth,
       h = element.offsetHeight;
   coords[0] = {
-    y: element.getBoundingClientRect().y + window.scrollY - offset.y,
-    x: element.getBoundingClientRect().x + window.scrollX - offset.x
+    y: axis.y ? element.getBoundingClientRect().y + window.scrollY - offset.y : 0,
+    x: axis.x ? element.getBoundingClientRect().x + window.scrollX - offset.x : 0
   };
   coords[1] = {
-    y: element.getBoundingClientRect().y + window.scrollY - offset.y,
-    x: element.getBoundingClientRect().x + window.scrollX + w + offset.x
+    y: axis.y ? element.getBoundingClientRect().y + window.scrollY - offset.y : 0,
+    x: axis.x ? element.getBoundingClientRect().x + window.scrollX + w + offset.x : window.innerWidth
   };
   coords[2] = {
-    y: element.getBoundingClientRect().y + window.scrollY + h + offset.y,
-    x: element.getBoundingClientRect().x + window.scrollX + w + offset.x
+    y: axis.y ? element.getBoundingClientRect().y + window.scrollY + h + offset.y : window.innerHeight,
+    x: axis.x ? element.getBoundingClientRect().x + window.scrollX + w + offset.x : window.innerWidth
   };
   coords[3] = {
-    y: element.getBoundingClientRect().y + window.scrollY + h + offset.y,
-    x: element.getBoundingClientRect().x + window.scrollX - offset.x
+    y: axis.y ? element.getBoundingClientRect().y + window.scrollY + h + offset.y : window.innerHeight,
+    x: axis.x ? element.getBoundingClientRect().x + window.scrollX - offset.x : 0
   };
   return coords;
-}
+} // merge two objects by replacing each of the target's properties with the corresponding object's property if defined otherwise keep the target as is
+
 
 function mergeObjects(target, object, deep) {
   for (var prop in target) {
@@ -427,4 +453,14 @@ function mergeObjects(target, object, deep) {
   }
 
   return target;
+} // get the document's height cross browser reliably 
+
+
+function getDocumentHeight() {
+  return Math.max(document.documentElement.clientHeight, document.body.scrollHeight, document.documentElement.scrollHeight, document.body.offsetHeight, document.documentElement.offsetHeight);
+} // get the document's width cross browser reliably
+
+
+function getDocumentWidth() {
+  return Math.max(document.documentElement.clientWidth, document.body.scrollWidth, document.documentElement.scrollWidth, document.body.offsetWidth, document.documentElement.offsetWidth);
 }
