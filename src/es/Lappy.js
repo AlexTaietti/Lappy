@@ -33,7 +33,7 @@ class GraphicalTest {
 		this.context.closePath();
 	}
 
-	//draw a dashed line on the outer area of the object
+	// draw a dashed line on the outer area of the object
 	drawApproachArea (target) {
 		this.context.beginPath();
 		this.context.strokeStyle = this.approachColor;
@@ -54,18 +54,18 @@ class GraphicalTest {
 		}
 	}
 
-	// clear the graphicla test's display
+	// clear the graphical test's display
 	clearTestDisplay () {
 		this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
 	}
 
-	//pause graphical test
+	// pause graphical test
 	pause () {
 		this.clearTestDisplay();
 		this.paused = true;
 	}
 
-	//resume graphical test
+	// resume graphical test
 	resume () { this.paused = false; }
 
 
@@ -86,7 +86,7 @@ class BasicOverlapObject {
 		
 		const completeOptions = options ? mergeObjects(defaults, options) : defaults;
 		
-		// Object's HTML
+		// object's HTML
 		this.HTML = completeOptions.html;
 		
 		// object data
@@ -140,7 +140,7 @@ class ActiveOverlapObject extends BasicOverlapObject {
 	// add a new basic object this active one can interact with
 	addTrackedObject (overlapObject, callbacks = {}) {
 
-		//default callbacks
+		// default callbacks
 		const defaults = {
 			onApproach: function  (main, check) { return 1; },
 			onOverlap:  function  (main, check) { return 1; },

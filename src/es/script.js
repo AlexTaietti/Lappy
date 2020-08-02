@@ -5,7 +5,6 @@ import {BasicOverlapObject, graphicalTest, ActiveOverlapObject, Lappy} from './L
 window.onload = function () {
 
 
-
 	////////////
 	// THINGS //
 	////////////
