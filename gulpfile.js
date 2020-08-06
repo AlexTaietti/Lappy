@@ -1,20 +1,19 @@
-const gulp        = require('gulp');
-const BS          = require('browser-sync').create();
-const sass        = require('gulp-sass');
-const autoprefix  = require('gulp-autoprefixer');
-const babel       = require('gulp-babel'); 
+const gulp       = require('gulp');
+const sass       = require('gulp-sass');
+const autoprefix = require('gulp-autoprefixer');
+const babel      = require('gulp-babel');
+const BS         = require('browser-sync').create();
 
-function style () {
+function compileScss () {
 
     return gulp.src('./src/scss/*.scss')
         .pipe(sass())
         .pipe(autoprefix())
-        .pipe(gulp.dest('./dist/css'))
-        .pipe(BS.stream());
+        .pipe(gulp.dest('./dist/css'));
 
 }
 
-function script () {
+function compileJs () {
 
     return gulp.src('./src/es/*.js')
         .pipe(babel({ presets: ['@babel/env'] }))
@@ -22,23 +21,19 @@ function script () {
 
 }
 
-gulp.task('serve', function (){
+gulp.task('serve', function () {
 
-    BS.init({
+  BS.init({ server: './dist' });
 
-        server: {
-            baseDir: './dist/',
-            index: 'index.html'
-        }
-    
-    });
-
-    gulp.watch('./src/scss/*.scss', style);
-    gulp.watch('./src/es/*.js', script);
-    gulp.watch('./dist/js/*.js').on('change', BS.reload);
-    gulp.watch('./dist/index.html').on('change', BS.reload);
+  gulp.watch('./dist/**').on('change', BS.reload);
 
 });
 
-gulp.task(style);
-gulp.task(script);
+//gulp.watch('./tmp/css/*.css', compileScss);
+//gulp.watch('./tmp/js/*.js', compileJs);
+
+gulp.watch('./src/scss/*.scss', compileScss);
+gulp.watch('./src/es/*.js', compileJs);
+
+gulp.task(compileScss);
+gulp.task(compileJs);

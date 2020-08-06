@@ -4,11 +4,11 @@
   "description": "JS snippet to dinamically handle HTML elements overlapping one another",
   "author": "Alex Taietti",
   "scripts": {
+    "compile:all": "gulp compileScss && gulp compileJs && echo 'smooooooth'",
+    "compile:scss": "gulp compileScss",
+    "compile:es": "gulp compileJs",
     "serve": "gulp serve",
-    "compile:all": "gulp style && gulp script && echo 'smooooooth'",
-    "compile:scss": "gulp style",
-    "compile:es": "gulp script",
-    "bundle:script": "webpack --config webpack.config.js"
+    "bundle": "webpack --config webpack.config.js"
   },
   "license": "ISC",
   "devDependencies": {

@@ -1,12 +1,23 @@
-const path = require('path');
+const path = require('path')
 
 module.exports = {
 
-	entry: './tmp/js/script.js',
+	entry: {
+
+		index: './tmp/js/index.js',
+
+		concept: './tmp/js/concept.js',
+		
+		useful: './tmp/js/useful.js'
+
+	},
 
 	output: {
+
 		path: path.resolve(__dirname, './dist/js'),
-		filename: 'bundle.js'
+
+		filename: '[name].js'
+
 	},
 
 	devtool: 'source-map',
