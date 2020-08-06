@@ -1,26 +1,10 @@
-*{
-
-	box-sizing: border-box;
-	margin: 0;
-	padding: 0;
-	user-select: none;
-
-}
-
-html{
-
-	font-size: 10px;
-	width: 100%;
-	height: 100%;
-
-}
+@import './base.scss';
 
 body{
 
 	position: relative;
 	width: 100%;
 	height: 100%;
-	font-family: 'Indie Flower', cursive;
 	background-color: orange;
 	display: flex;
 	justify-content: space-between;
@@ -28,7 +12,7 @@ body{
 
 }
 
-canvas{
+#test-canvas{
 
 	width: 100%;
 	height: 100%;
@@ -43,7 +27,8 @@ canvas{
 
 	position: fixed;
 	top: 10px;
-	left: 10px;
+	transform: translateX(-50%);
+	left: 50%;
 	font-size: 2rem;
 	padding: 5px;
 	cursor: pointer;
@@ -70,6 +55,19 @@ canvas{
 
 }
 
+#home-link{
+
+	position: fixed;
+	top: 10px;
+	left: 10px;
+	padding: 5px;
+	font-size: 2rem;
+	color: black;
+	
+	&:active{ color: black; }
+
+}
+
 
 .test-container{
 
@@ -79,7 +77,7 @@ canvas{
 	transition-duration: 0.1s;
 
 
-	&.main{
+	&--main{
 
 		z-index: 1;
 		left: 50%;
@@ -92,42 +90,42 @@ canvas{
 
 		&.overlapping{
 
-			&--check{	
-			
+			&--check{
+
 				//orange & blue
 				background-color: #F95700;
 				color: #00A4CC;
 				opacity: 0.5;
-			
+
 			}
 
 			&--second{
-			
+
 				//ghost
 				background-color: #101820;
 				color: #F2AA4C;
 				opacity: 0.5;
-			
+
 			}
 
 		}
 
 		&.approaching{
 
-			&--check{	
-				
+			&--check{
+
 				//purple & yellow
 				color: #FCF951;
 				background-color: #422057;
-			
+
 			}
 
-			&--second{	
-				
+			&--second{
+
 				//green & white
 				color: #FCF6F5;
 				background-color: #2BAE66;
-			
+
 			}
 
 
@@ -135,7 +133,7 @@ canvas{
 
 	}
 
-	&.check{
+	&--check{
 
 		position: relative;
 		z-index: 0;
@@ -162,7 +160,7 @@ canvas{
 		}
 	}
 
-	&.second{
+	&--second{
 
 		background-color: blue;
 		position: relative;

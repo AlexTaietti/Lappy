@@ -9,22 +9,22 @@ window.onload = function () {
   ////////////
   var $ = document.querySelector.bind(document);
   var $$ = document.querySelectorAll.bind(document);
-  var main = $('.test-container.main');
-  var second = $('.test-container.second');
-  var testToggle = $('#graphicalTestToggle');
-  var check = $('.test-container.check'); // canvas set up
+  var $main = $('.test-container--main');
+  var $second = $('.test-container--second');
+  var $testToggle = $('#graphicalTestToggle');
+  var $check = $('.test-container--check'); // canvas set up
 
-  var mainCanvas = $('#main-canvas');
-  var mainCtx = mainCanvas.getContext('2d');
-  mainCanvas.width = document.body.offsetWidth;
-  mainCanvas.height = document.body.offsetHeight;
+  var $mainCanvas = $('#test-canvas');
+  var mainCtx = $mainCanvas.getContext('2d');
+  $mainCanvas.width = document.body.offsetWidth;
+  $mainCanvas.height = document.body.offsetHeight;
   mainCtx.font = '1rem sans-serif'; // dragging flag
 
   var draggingMain = false; ////////////
   // EVENTS //
   ////////////
 
-  testToggle.addEventListener('click', function () {
+  $testToggle.addEventListener('click', function () {
     if (!L.graphicalTest) {
       L.addGraphicalTest({
         context: mainCtx
@@ -39,10 +39,10 @@ window.onload = function () {
       }
     }
   });
-  main.addEventListener('mousedown', function () {
+  $main.addEventListener('mousedown', function () {
     draggingMain = true;
   });
-  main.addEventListener('touchstart', function () {
+  $main.addEventListener('touchstart', function () {
     draggingMain = true;
   });
   document.addEventListener('mouseup', function () {
@@ -57,15 +57,15 @@ window.onload = function () {
   });
   document.addEventListener('mousemove', function (e) {
     if (draggingMain) {
-      main.style.top = window.innerWidth >= 650 ? "".concat(e.clientY - main.offsetHeight / 2, "px") : "".concat(e.clientY, "px");
-      main.style.left = "".concat(e.clientX, "px");
+      $main.style.top = window.innerWidth >= 650 ? "".concat(e.clientY - $main.offsetHeight / 2, "px") : "".concat(e.clientY, "px");
+      $main.style.left = "".concat(e.clientX, "px");
       L.watch();
     }
   });
   document.addEventListener('touchmove', function (e) {
     if (draggingMain) {
-      main.style.top = "".concat(e.touches[0].clientY, "px");
-      main.style.left = "".concat(e.touches[0].clientX, "px");
+      $main.style.top = "".concat(e.touches[0].clientY, "px");
+      $main.style.left = "".concat(e.touches[0].clientX, "px");
       L.watch();
     }
   });
@@ -83,8 +83,7 @@ window.onload = function () {
   ////////////////
   // initialise the overlap objects
 
-  var M = new _Lappy.ActiveOverlapObject({
-    html: main,
+  var M = new _Lappy.ActiveOverlapObject($main, {
     axis: {
       x: true,
       y: true
@@ -97,8 +96,7 @@ window.onload = function () {
       y: 25
     }
   });
-  var C = new _Lappy.BasicOverlapObject({
-    html: check,
+  var C = new _Lappy.BasicOverlapObject($check, {
     offset: window.innerWidth >= 768 ? {
       x: 20,
       y: 40
@@ -107,8 +105,7 @@ window.onload = function () {
       y: 20
     }
   });
-  var S = new _Lappy.BasicOverlapObject({
-    html: second,
+  var S = new _Lappy.BasicOverlapObject($second, {
     offset: window.innerWidth >= 768 ? {
       x: 30,
       y: 20

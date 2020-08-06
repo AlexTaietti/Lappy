@@ -1,6 +1,4 @@
-import {BasicOverlapObject, graphicalTest, ActiveOverlapObject, Lappy} from './Lappy.js'; //import Lappy
-
-
+import {BasicOverlapObject, ActiveOverlapObject, Lappy} from './Lappy.js'; //import Lappy
 
 window.onload = function () {
 
@@ -13,18 +11,18 @@ window.onload = function () {
 	const $  = document.querySelector.bind(document);
 	const $$ = document.querySelectorAll.bind(document);
 
-	const main       = $('.test-container.main');
-	const second     = $('.test-container.second');
-	const testToggle = $('#graphicalTestToggle');
-	const check      = $('.test-container.check');
+	const $main       = $('.test-container--main');
+	const $second     = $('.test-container--second');
+	const $testToggle = $('#graphicalTestToggle');
+	const $check      = $('.test-container--check');
 
 
 	// canvas set up
-	const mainCanvas  = $('#main-canvas');
-	const mainCtx     = mainCanvas.getContext('2d');
+	const $mainCanvas  = $('#test-canvas');
+	const mainCtx     = $mainCanvas.getContext('2d');
 
-	mainCanvas.width  = document.body.offsetWidth;
-	mainCanvas.height = document.body.offsetHeight;
+	$mainCanvas.width  = document.body.offsetWidth;
+	$mainCanvas.height = document.body.offsetHeight;
 	mainCtx.font      = '1rem sans-serif';
 
 	// dragging flag
@@ -37,7 +35,7 @@ window.onload = function () {
 	////////////
 
 
-	testToggle.addEventListener('click', function(){
+	$testToggle.addEventListener('click', function(){
 
 		if(!L.graphicalTest) {
 			L.addGraphicalTest({ context: mainCtx });
@@ -47,17 +45,17 @@ window.onload = function () {
 				L.graphicalTest.pause();
 			} else {
 				L.graphicalTest.resume();
-				L.displayGraphicalTest();		
+				L.displayGraphicalTest();
 			}
 		}
-	
+
 	});
 
 
-	main.addEventListener('mousedown', function(){ draggingMain = true; });
+	$main.addEventListener('mousedown', function(){ draggingMain = true; });
 
 
-	main.addEventListener('touchstart', function(){ draggingMain = true; });
+	$main.addEventListener('touchstart', function(){ draggingMain = true; });
 
 
 	document.addEventListener('mouseup', function(){
@@ -73,8 +71,8 @@ window.onload = function () {
 	document.addEventListener('mousemove', function(e){
 
 		if(draggingMain){
-			main.style.top  = window.innerWidth >= 650 ?`${e.clientY - main.offsetHeight/2}px` : `${e.clientY}px`;
-			main.style.left  = `${e.clientX}px`;
+			$main.style.top  = window.innerWidth >= 650 ?`${e.clientY - $main.offsetHeight/2}px` : `${e.clientY}px`;
+			$main.style.left  = `${e.clientX}px`;
 			L.watch();
 		}
 
@@ -84,8 +82,8 @@ window.onload = function () {
 	document.addEventListener('touchmove', function(e){
 
 		if(draggingMain){
-			main.style.top  = `${e.touches[0].clientY}px`;
-			main.style.left  = `${e.touches[0].clientX}px`;
+			$main.style.top  = `${e.touches[0].clientY}px`;
+			$main.style.left  = `${e.touches[0].clientX}px`;
 			L.watch();
 		}
 
@@ -113,26 +111,23 @@ window.onload = function () {
 
 
 	// initialise the overlap objects
-	const M = new ActiveOverlapObject({
+	const M = new ActiveOverlapObject($main, {
 
-		html: main,
 		axis: {x: true, y: true },
 		offset: window.innerWidth >= 768 ? { x: 30, y: 50 } : { x: 15, y: 25 },
 
 	});
 
 
-	const C = new BasicOverlapObject({
+	const C = new BasicOverlapObject($check, {
 
-		html: check,
 		offset: window.innerWidth >= 768 ? {x: 20, y: 40} : { x: 10, y: 20 }
 
 	});
 
 
-	const S = new BasicOverlapObject({
+	const S = new BasicOverlapObject($second, {
 
-		html: second,
 		offset: window.innerWidth >= 768 ? {x: 30, y: 20} : { x: 15, y: 10 }
 
 	});
@@ -155,10 +150,10 @@ window.onload = function () {
 
 			current.classList.remove('overlapping--check');
 			target.classList.remove('overlapped');
-		
+
 			current.classList.add('approaching--check');
 			target.classList.add('approached');
-		
+
 		},
 
 		onOverlap: function (current, target) {
@@ -190,10 +185,10 @@ window.onload = function () {
 
 			current.classList.remove('overlapping--second');
 			target.classList.remove('overlapped');
-		
+
 			current.classList.add('approaching--second');
 			target.classList.add('approached');
-		
+
 		},
 
 		onOverlap: function (current, target) {
@@ -203,6 +198,7 @@ window.onload = function () {
 
 			current.classList.add('overlapping--second');
 			target.classList.add('overlapped');
+
 		}
 
 	};
@@ -214,7 +210,7 @@ window.onload = function () {
 
 	// initialise Lappy
 	const L = new Lappy();
-	
+
 	// add the overlap object to be watched (could be more than one) to lappy
 	L.addActiveObject(M);
 
