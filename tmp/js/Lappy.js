@@ -111,13 +111,12 @@ var GraphicalTest = /*#__PURE__*/function () {
 exports.GraphicalTest = GraphicalTest;
 
 var BasicOverlapObject = /*#__PURE__*/function () {
-  function BasicOverlapObject() {
-    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  function BasicOverlapObject(htmlElement) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
     _classCallCheck(this, BasicOverlapObject);
 
     var defaults = {
-      html: undefined,
       offset: {
         x: 0,
         y: 0
@@ -127,15 +126,15 @@ var BasicOverlapObject = /*#__PURE__*/function () {
         y: true
       }
     };
-    var completeOptions = options ? mergeObjects(defaults, options) : defaults; // object's HTML
+    var completeOptions = mergeObjects(defaults, options); // object's HTML
 
-    this.HTML = completeOptions.html; // object data
+    this.HTML = htmlElement; // object data
 
     this.offset = completeOptions.offset;
     this.axis = completeOptions.axis;
     this.active = false;
-    this.htmlCoordinates = getInnerCoords(completeOptions.html);
-    this.coordinates = getOuterCoords(completeOptions.html, completeOptions.offset, completeOptions.axis);
+    this.htmlCoordinates = getInnerCoords(htmlElement);
+    this.coordinates = getOuterCoords(htmlElement, completeOptions.offset, completeOptions.axis);
   } // update both the coordinates of the actual HTML element as well as the imaginary offset bounding box surrounding it
 
 
@@ -157,15 +156,15 @@ var ActiveOverlapObject = /*#__PURE__*/function (_BasicOverlapObject) {
 
   var _super = _createSuper(ActiveOverlapObject);
 
-  function ActiveOverlapObject() {
+  function ActiveOverlapObject(htmlElement) {
     var _this;
 
-    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
     _classCallCheck(this, ActiveOverlapObject);
 
     // invoke super class constructor (aka BasicOverlapObject's constructor)
-    _this = _super.call(this, options); // this boi is active
+    _this = _super.call(this, htmlElement, options); // this boi is active
 
     _this.active = true; // passive objects this boiii can interact with
 
@@ -183,14 +182,15 @@ var ActiveOverlapObject = /*#__PURE__*/function (_BasicOverlapObject) {
       for (var i = 0; i < this.trackedObjects.length; i++) {
         this.trackedObjects[i].object.updateCoordinates();
       }
-    } // add a new basic object this active one can interact with
+    } // add a new basic object this active one can interact with (can also be an HTML collection)
 
   }, {
     key: "addTrackedObject",
     value: function addTrackedObject(overlapObject) {
       var callbacks = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
       // default callbacks
-      var defaults = {
+      var defaultCallbacks = {
         onApproach: function onApproach(main, check) {
           return 1;
         },
@@ -204,14 +204,28 @@ var ActiveOverlapObject = /*#__PURE__*/function (_BasicOverlapObject) {
           return 1;
         }
       };
-      this.trackedObjects.push({
-        object: overlapObject,
-        callbacks: mergeObjects(defaults, callbacks),
-        lastOverlapData: {
-          x: undefined,
-          y: undefined
+
+      if (overlapObject.length) {
+        for (var i = 0; i < overlapObject.length; i++) {
+          this.trackedObjects.push({
+            object: overlapObject instanceof BasicOverlapObject ? overlapObject : new BasicOverlapObject(overlapObject[i], options),
+            callbacks: mergeObjects(defaultCallbacks, callbacks),
+            lastOverlapData: {
+              x: undefined,
+              y: undefined
+            }
+          });
         }
-      });
+      } else {
+        this.trackedObjects.push({
+          object: overlapObject instanceof BasicOverlapObject ? overlapObject : new BasicOverlapObject(overlapObject, options),
+          callbacks: mergeObjects(defaultCallbacks, callbacks),
+          lastOverlapData: {
+            x: undefined,
+            y: undefined
+          }
+        });
+      }
     }
   }]);
 
@@ -453,7 +467,7 @@ function mergeObjects(target, object, deep) {
   }
 
   return target;
-} // get the document's height cross browser reliably 
+} // get the document's height cross browser reliably
 
 
 function getDocumentHeight() {

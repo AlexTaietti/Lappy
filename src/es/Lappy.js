@@ -16,7 +16,7 @@ class GraphicalTest {
 
 		// paused flag
 		this.paused = false;
-	
+
 	}
 
 	// display the coordinates of each vertex of the target (aka the current element) relative to the document's top left corner
@@ -76,26 +76,25 @@ class GraphicalTest {
 class BasicOverlapObject {
 
 
-	constructor (options = {}) {
-		
+	constructor (htmlElement, options = {}) {
+
 		const defaults = {
-			html: undefined,
 			offset: {x: 0, y: 0},
 			axis: { x: true, y: true }
 		};
-		
-		const completeOptions = options ? mergeObjects(defaults, options) : defaults;
-		
+
+		const completeOptions = mergeObjects(defaults, options);
+
 		// object's HTML
-		this.HTML = completeOptions.html;
-		
+		this.HTML = htmlElement;
+
 		// object data
 		this.offset          = completeOptions.offset;
 		this.axis            = completeOptions.axis;
 		this.active          = false;
-		this.htmlCoordinates = getInnerCoords(completeOptions.html);
-		this.coordinates     = getOuterCoords(completeOptions.html, completeOptions.offset, completeOptions.axis);
-	
+		this.htmlCoordinates = getInnerCoords(htmlElement);
+		this.coordinates     = getOuterCoords(htmlElement, completeOptions.offset, completeOptions.axis);
+
 	}
 
 	// update both the coordinates of the actual HTML element as well as the imaginary offset bounding box surrounding it
@@ -112,10 +111,10 @@ class BasicOverlapObject {
 class ActiveOverlapObject extends BasicOverlapObject {
 
 
-	constructor(options = {}) {
+	constructor(htmlElement, options = {}) {
 
 		// invoke super class constructor (aka BasicOverlapObject's constructor)
-		super(options);
+		super(htmlElement, options);
 
 		// this boi is active
 		this.active = true;
@@ -127,36 +126,56 @@ class ActiveOverlapObject extends BasicOverlapObject {
 
 	// update the active element's coordinates as well as the coordinates of the basic objects it may interact with
 	updateCoordinates () {
-		
+
 		this.htmlCoordinates = getInnerCoords(this.HTML);
 		this.coordinates     = getOuterCoords(this.HTML, this.offset, this.axis);
-		
+
 		for(let i = 0; i < this.trackedObjects.length; i++) {
 			this.trackedObjects[i].object.updateCoordinates();
 		}
-	
+
 	}
 
-	// add a new basic object this active one can interact with
-	addTrackedObject (overlapObject, callbacks = {}) {
+	// add a new basic object this active one can interact with (can also be an HTML collection)
+	addTrackedObject (overlapObject, callbacks = {}, options = {}) {
 
 		// default callbacks
-		const defaults = {
+		const defaultCallbacks = {
 			onApproach: function  (main, check) { return 1; },
 			onOverlap:  function  (main, check) { return 1; },
 			onExit:     function  (main, check) { return 1; },
 			onLeave:    function  (main, check) { return 1; }
 		};
 
-		this.trackedObjects.push({
+		if(overlapObject.length){
 
-			object: overlapObject,
+			for(let i = 0; i < overlapObject.length; i++){
 
-			callbacks: mergeObjects(defaults, callbacks),
-			
-			lastOverlapData: {x: undefined, y: undefined}
+				this.trackedObjects.push({
 
-		});
+					object: overlapObject instanceof BasicOverlapObject ? overlapObject : new BasicOverlapObject(overlapObject[i], options),
+
+					callbacks: mergeObjects(defaultCallbacks, callbacks),
+
+					lastOverlapData: {x: undefined, y: undefined}
+
+				});
+
+			}
+
+		} else {
+
+			this.trackedObjects.push({
+
+				object: overlapObject instanceof BasicOverlapObject ? overlapObject : new BasicOverlapObject(overlapObject, options),
+
+				callbacks: mergeObjects(defaultCallbacks, callbacks),
+
+				lastOverlapData: {x: undefined, y: undefined}
+
+			});
+
+		}
 
 	}
 
@@ -217,57 +236,57 @@ class Lappy {
 			x: main.axis.x ? overlapX : overlapY,
 			y: main.axis.y ? overlapY : overlapX
 		}
-	
+
 	}
 
 	// for now if neither of the two objects involved in the overlap have an offset property the only two callbacks executed will be "onOverlap" and "onLeave" ("definitely something I'll fix soon!")
 	checkOverlap (main, check) {
-		
+
 		let overlap = this.calculateOverlap(main, check.object);
-		
+
 		if(overlap.x && overlap.y){
-			
+
 			if(Math.abs(overlap.x) === Math.abs(overlap.y)){
-			
+
 				if(overlap.x % 2 === 0 && overlap.y % 2 === 0) {
-			
+
 					if( ((overlap.x + check.lastOverlapData.x) % 3 === 0 && overlap.x * check.lastOverlapData.x > 0 && overlap.x % 2 === 0) || ((overlap.y + check.lastOverlapData.y) % 3 === 0 && overlap.y * check.lastOverlapData.y > 0 && overlap.y % 2 === 0) ){
-			
+
 						check.callbacks.onExit(main.HTML, check.object.HTML);
-			
+
 					} else {
-			
+
 						check.callbacks.onApproach(main.HTML, check.object.HTML);
 					}
-			
+
 				} else {
-			
+
 					check.callbacks.onOverlap(main.HTML, check.object.HTML);
-			
+
 				}
-			
+
 			} else if(overlap.x % 2 === 0 || overlap.y % 2 === 0) {
-			
+
 				if( ((overlap.x + check.lastOverlapData.x) % 3 === 0 && overlap.x * check.lastOverlapData.x > 0 && overlap.x % 2 === 0) || ((overlap.y + check.lastOverlapData.y) % 3 === 0 && overlap.y * check.lastOverlapData.y > 0 && overlap.y % 2 === 0) ){
-			
+
 					check.callbacks.onExit(main.HTML, check.object.HTML);
-			
+
 				} else {
-			
+
 					check.callbacks.onApproach(main.HTML, check.object.HTML);
-			
+
 				}
-			
+
 			}
-		
+
 		} else if((!overlap.x || !overlap.y) && (check.lastOverlapData.x && check.lastOverlapData.y)) {
-		
+
 			check.callbacks.onLeave(main.HTML, check.object.HTML);
-		
+
 		}
-		
+
 		check.lastOverlapData = overlap;
-	
+
 	}
 
 	displayGraphicalTest () {
@@ -300,14 +319,14 @@ class Lappy {
 		if(this.graphicalTest && !this.graphicalTest.paused){
 			this.displayGraphicalTest();
 		}
-		
+
 		for(let i = 0; i < this.overlapObjects.length; i++){
 			let currentActive = this.overlapObjects[i];
 			for(let r = 0; r < currentActive.trackedObjects.length; r++){
 				this.checkOverlap(currentActive, currentActive.trackedObjects[r]);
 			}
 		}
-	
+
 	}
 
 
@@ -322,9 +341,9 @@ class Lappy {
 
 // get an HTML element's variables
 function getInnerCoords (element) {
-	
+
 	let coords = [], w = element.offsetWidth, h = element.offsetHeight;
-	
+
 	coords[0] = {
 		y: element.getBoundingClientRect().y + window.scrollY,
 		x: element.getBoundingClientRect().x + window.scrollX
@@ -344,43 +363,43 @@ function getInnerCoords (element) {
 		y: element.getBoundingClientRect().y + window.scrollY + h,
 		x: element.getBoundingClientRect().x + window.scrollX
 	};
-	
+
 	return coords;
 
 }
 
 // get an overlapObject's outer apprach area's coordinates
 function getOuterCoords(element, offset = 0, axis = {x: undefined, y: undefined}) {
-	
+
 	let coords = [], w = element.offsetWidth, h = element.offsetHeight;
-	
+
 	coords[0] = {
 		y: axis.y ? (element.getBoundingClientRect().y + window.scrollY - offset.y) : 0,
 		x: axis.x ? (element.getBoundingClientRect().x + window.scrollX - offset.x) : 0
 	};
-	
+
 	coords[1] = {
 		y: axis.y ? (element.getBoundingClientRect().y + window.scrollY - offset.y) : 0,
 		x: axis.x ? (element.getBoundingClientRect().x + window.scrollX + w + offset.x) : window.innerWidth
 	};
-	
+
 	coords[2] = {
 		y: axis.y ? (element.getBoundingClientRect().y + window.scrollY + h + offset.y) : window.innerHeight,
 		x: axis.x ? (element.getBoundingClientRect().x + window.scrollX + w + offset.x) : window.innerWidth
 	};
-	
+
 	coords[3] = {
 		y: axis.y ? (element.getBoundingClientRect().y + window.scrollY + h + offset.y) : window.innerHeight,
 		x: axis.x ? (element.getBoundingClientRect().x + window.scrollX - offset.x) : 0
 	};
-	
+
 	return coords;
 
 }
 
 // merge two objects by replacing each of the target's properties with the corresponding object's property if defined otherwise keep the target as is
 function mergeObjects (target, object, deep) {
-	
+
 	for(let prop in target){
 		if(object.hasOwnProperty(prop)){
 			if(typeof object[prop] === "object"){
@@ -399,32 +418,32 @@ function mergeObjects (target, object, deep) {
 
 }
 
-// get the document's height cross browser reliably 
+// get the document's height cross browser reliably
 function getDocumentHeight() {
-    
+
     return Math.max(
-        
+
         document.documentElement.clientHeight,
         document.body.scrollHeight,
         document.documentElement.scrollHeight,
         document.body.offsetHeight,
         document.documentElement.offsetHeight
-    
+
     );
 
 }
 
 // get the document's width cross browser reliably
 function getDocumentWidth() {
-    
+
     return Math.max(
-    
+
         document.documentElement.clientWidth,
         document.body.scrollWidth,
         document.documentElement.scrollWidth,
         document.body.offsetWidth,
         document.documentElement.offsetWidth
-    
+
     );
 
 }
