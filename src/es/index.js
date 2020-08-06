@@ -1,1 +1,1 @@
-window.onload = function (){ console.log( 'ciao' ); };
+window.onload = function (){ console.log( "Lappy's home page" ); };
