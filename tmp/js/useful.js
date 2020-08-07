@@ -16,11 +16,22 @@ function toggleClass(element, CSSClass) {
 var $ = document.querySelector.bind(document);
 var $$ = document.querySelectorAll.bind(document);
 var $hamburger = $(".header__hamburger");
-var $hamburgerInner = $(".hamburger__inner");
+
+$hamburger.onclick = function () {
+  toggleClass($hamburger, 'is-active');
+  toggleClass($navigation, 'is-open');
+};
+
 var $navigation = $(".navigation");
 var $header = $(".header");
 var $$badContrast = $$(".content__section:nth-child(even)");
-var headerOverlap = new _Lappy.ActiveOverlapObject($header);
+var $$allSections = $$(".content__section"); //create an ActiveOverlapObject (AOO)
+
+var headerOverlap = new _Lappy.ActiveOverlapObject($header); //AOOs can be fed other html elements (or nodes lists) whith witch they can interact..
+//The interactions are determined by the methods passed as the second argument of the method...
+//The 4 stages of overlap Lappy can handle are "onApproach", "onOverlap", "onExit" and finally "onLeave"...
+//To more clearely see when all of these events get triggered go back to Lappy's home page and click on "concept"
+
 headerOverlap.addTrackedObject($$badContrast, {
   onOverlap: function onOverlap(main, check) {
     $header.classList.add('scrolled');
@@ -30,15 +41,20 @@ headerOverlap.addTrackedObject($$badContrast, {
     $header.classList.remove('scrolled');
     $navigation.classList.remove('scrolled');
   }
-}); //console.log(headerOverlap.trackedObjects[0].callbacks.onLeave.toString());
+}); //you can of course add tracked objects in multiple batches...
+//for now I don't have a system to detect duplicate elements in an AOO's list of tracked objects!
 
-var L = new _Lappy.Lappy();
-L.addActiveObject(headerOverlap);
+headerOverlap.addTrackedObject($$allSections, {
+  onOverlap: function onOverlap(main, check) {
+    check.querySelector('h1').classList.add('is-visible');
+  }
+}); //A new Lappy is born!
 
-$hamburger.onclick = function () {
-  toggleClass($hamburger, 'is-active');
-  toggleClass($navigation, 'is-open');
-};
+var L = new _Lappy.Lappy(); //Lappy can be fed AOOs of which it will track the position...
+//the "watch" method needs to be called whenever you want to check the overlap state of Lappy's AOOs...
+//In this example I opted to call it whenever the window scroll event is fired
+
+L.addActiveObject(headerOverlap); //use "watch" to track the overlap state of every one of Lappy's AOOs (relative to their own tracked objects)
 
 window.addEventListener('scroll', function () {
   L.watch();
