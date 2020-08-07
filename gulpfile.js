@@ -29,9 +29,6 @@ gulp.task('serve', function () {
 
 });
 
-//gulp.watch('./tmp/css/*.css', compileScss);
-//gulp.watch('./tmp/js/*.js', compileJs);
-
 gulp.watch('./src/scss/*.scss', compileScss);
 gulp.watch('./src/es/*.js', compileJs);
 

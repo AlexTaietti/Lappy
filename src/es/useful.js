@@ -1,7 +1,7 @@
 import {BasicOverlapObject, ActiveOverlapObject, Lappy} from './Lappy.js'; //import Lappy
 
 
-//window.onload = function () {
+window.onload = function () {
 
   //toggle an element's css class
 	function toggleClass(element, CSSClass){
@@ -75,4 +75,4 @@ import {BasicOverlapObject, ActiveOverlapObject, Lappy} from './Lappy.js'; //imp
   L.watch();
 
 
-//}
+}
