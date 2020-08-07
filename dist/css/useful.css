@@ -219,10 +219,31 @@ section {
   section:nth-child(even) {
     background-color: #1d4d97;
     color: #48f224; }
+    section:nth-child(even) h1::after {
+      background-color: #48f224; }
   section h1 {
-    padding: 15px;
+    padding: 10px;
+    position: relative;
     transition-property: opacity;
     transition-duration: 0.5s;
-    opacity: 0; }
+    opacity: 0;
+    cursor: pointer;
+    transition-duration: 0.5s; }
+    section h1::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      width: 0;
+      height: 2px;
+      background-color: #5f2171;
+      bottom: 0;
+      transform: translateX(-50%);
+      transition-duration: 0.5s; }
+    @media screen and (max-width: 500px) {
+      section h1 {
+        font-size: 3.2rem;
+        padding: 20px; } }
     section h1.is-visible {
       opacity: 1; }
+    section h1:hover::after {
+      width: 100%; }

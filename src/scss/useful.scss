@@ -346,16 +346,40 @@ section {
   &:nth-child(even){
     background-color: #1d4d97;
 		color: #48f224;
-  }
+
+		& h1::after{ background-color: #48f224; }
+
+	}
 
 	& h1 {
 
-		padding: 15px;
+		padding: 10px;
+		position: relative;
 		transition-property: opacity;
 		transition-duration: 0.5s;
 		opacity: 0;
+		cursor: pointer;
+		transition-duration: 0.5s;
+
+		&::after{
+
+			content: '';
+			position: absolute;
+			left: 50%;
+			width: 0;
+			height: 2px;
+			background-color:  #5f2171;
+			bottom: 0;
+			transform: translateX(-50%);
+			transition-duration: 0.5s;
+
+		}
+
+		@media screen and (max-width: 500px) { font-size: 3.2rem; padding: 20px; }
 
 		&.is-visible{ opacity: 1; }
+
+		&:hover{ &::after{ width: 100%;} }
 
 	}
 
