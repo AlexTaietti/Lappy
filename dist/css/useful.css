@@ -109,7 +109,7 @@ a {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  margin-top: 50px;
+  margin-top: 30px;
   padding: 0 12%; }
   .header__home__logo {
     display: block;
@@ -180,8 +180,7 @@ a {
         transform: translate3d(0, -7px, 0) rotateZ(45deg); } }
   @media screen and (max-width: 600px) {
     .header {
-      padding: 0 8%;
-      margin-top: 30px; } }
+      padding: 0 8%; } }
   @media screen and (max-width: 500px) {
     .header {
       padding: 0 7%; }
@@ -230,7 +229,7 @@ section {
     cursor: pointer;
     transition-duration: 0.5s; }
     section h1::after {
-      content: '';
+      content: "";
       position: absolute;
       left: 50%;
       width: 0;
@@ -239,11 +238,13 @@ section {
       bottom: 0;
       transform: translateX(-50%);
       transition-duration: 0.5s; }
-    @media screen and (max-width: 500px) {
-      section h1 {
-        font-size: 3.2rem;
-        padding: 20px; } }
     section h1.is-visible {
       opacity: 1; }
     section h1:hover::after {
       width: 100%; }
+    @media screen and (max-width: 500px) {
+      section h1 {
+        font-size: 3.2rem;
+        padding: 20px; }
+        section h1::after {
+          display: none; } }
