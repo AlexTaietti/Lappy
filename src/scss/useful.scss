@@ -15,7 +15,7 @@
   font-size: 1.6rem;
 
   &.is-open {
-    transform: translate3d(0, 50px, 0);
+    transform: translate3d(0, 30px, 0);
 
     & a {
       opacity: 0.5;
@@ -217,7 +217,7 @@
     }
 
     &__hamburger.is-active {
-      transform: translate3d(0, 60px, 0);
+      transform: translate3d(0, 40px, 0);
 
       & .header__hamburger__inner__bun {
         &--top {
