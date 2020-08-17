@@ -15,7 +15,7 @@ function compileScss () {
 
 function compileJs () {
 
-    return gulp.src('./src/es/*.js')
+    return gulp.src('./src/es/**/*.js')
         .pipe(babel({ presets: ['@babel/env'] }))
         .pipe(gulp.dest('./tmp/js'));
 
@@ -30,7 +30,7 @@ gulp.task('serve', function () {
 });
 
 gulp.watch('./src/scss/*.scss', compileScss);
-gulp.watch('./src/es/*.js', compileJs);
+gulp.watch('./src/es/**/*.js', compileJs);
 
 gulp.task(compileScss);
 gulp.task(compileJs);

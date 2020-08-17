@@ -4,11 +4,11 @@ module.exports = {
 
 	entry: {
 
-		index: './tmp/js/index.js',
+		index: './tmp/js/demos/index.js',
 
-		concept: './tmp/js/concept.js',
-		
-		useful: './tmp/js/useful.js'
+		concept: './tmp/js/demos/concept.js',
+
+		useful: './tmp/js/demos/useful.js'
 
 	},
 

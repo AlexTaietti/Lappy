@@ -76,24 +76,22 @@ class GraphicalTest {
 class BasicOverlapObject {
 
 
-	constructor (htmlElement, options = {}) {
+	constructor (htmlElement, {offset, axis} = {}) {
 
-		const defaults = {
+		const _defaults = {
 			offset: {x: 0, y: 0},
 			axis: { x: true, y: true }
 		};
-
-		const completeOptions = mergeObjects(defaults, options);
 
 		// object's HTML
 		this.HTML = htmlElement;
 
 		// object data
-		this.offset          = completeOptions.offset;
-		this.axis            = completeOptions.axis;
+		this.offset          = offset || _defaults.offset;
+		this.axis            = axis   || _defaults.axis;
 		this.active          = false;
 		this.htmlCoordinates = getInnerCoords(htmlElement);
-		this.coordinates     = getOuterCoords(htmlElement, completeOptions.offset, completeOptions.axis);
+		this.coordinates     = getOuterCoords(htmlElement, this.offset, this.axis);
 
 	}
 
@@ -140,14 +138,14 @@ class ActiveOverlapObject extends BasicOverlapObject {
 	addTrackedObject (overlapObject, callbacks = {}, options = {}) {
 
 		// default callbacks
-		const defaultCallbacks = {
+		const _defaultCallbacks = {
 			onApproach: function  (main, check) { return 1; },
 			onOverlap:  function  (main, check) { return 1; },
 			onExit:     function  (main, check) { return 1; },
 			onLeave:    function  (main, check) { return 1; }
 		};
 
-		if(overlapObject.length){
+		if(NodeList.prototype.isPrototypeOf(overlapObject)){
 
 			for(let i = 0; i < overlapObject.length; i++){
 
@@ -155,9 +153,9 @@ class ActiveOverlapObject extends BasicOverlapObject {
 
 					object: overlapObject instanceof BasicOverlapObject ? overlapObject : new BasicOverlapObject(overlapObject[i], options),
 
-					callbacks: mergeObjects(defaultCallbacks, callbacks),
+					callbacks: mergeObjects(_defaultCallbacks, callbacks),
 
-					lastOverlapData: {x: undefined, y: undefined}
+					lastOverlapData: {x: null, y: null}
 
 				});
 
@@ -169,9 +167,9 @@ class ActiveOverlapObject extends BasicOverlapObject {
 
 				object: overlapObject instanceof BasicOverlapObject ? overlapObject : new BasicOverlapObject(overlapObject, options),
 
-				callbacks: mergeObjects(defaultCallbacks, callbacks),
+				callbacks: mergeObjects(_defaultCallbacks, callbacks),
 
-				lastOverlapData: {x: undefined, y: undefined}
+				lastOverlapData: {x: null, y: null}
 
 			});
 
@@ -187,8 +185,8 @@ class ActiveOverlapObject extends BasicOverlapObject {
 class Lappy {
 
 
-	constructor (options = {}) {
-		if(options.graphicalTest) this.graphicalTest = new GraphicalTest(options.graphicalTest);
+	constructor ({graphicalTest} = {}) {
+		if(graphicalTest) this.graphicalTest = new GraphicalTest(graphicalTest);
 		this.overlapObjects = [];
 	}
 
@@ -242,7 +240,7 @@ class Lappy {
 	// for now if neither of the two objects involved in the overlap have an offset property the only two callbacks executed will be "onOverlap" and "onLeave" ("definitely something I'll fix soon!")
 	checkOverlap (main, check) {
 
-		let overlap = this.calculateOverlap(main, check.object);
+		const overlap = this.calculateOverlap(main, check.object);
 
 		if(overlap.x && overlap.y){
 
