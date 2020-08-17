@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./tmp/js/concept.js");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./tmp/js/demos/concept.js");
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -208,11 +208,13 @@ exports.GraphicalTest = GraphicalTest;
 
 var BasicOverlapObject = /*#__PURE__*/function () {
   function BasicOverlapObject(htmlElement) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+        offset = _ref.offset,
+        axis = _ref.axis;
 
     _classCallCheck(this, BasicOverlapObject);
 
-    var defaults = {
+    var _defaults = {
       offset: {
         x: 0,
         y: 0
@@ -221,16 +223,15 @@ var BasicOverlapObject = /*#__PURE__*/function () {
         x: true,
         y: true
       }
-    };
-    var completeOptions = mergeObjects(defaults, options); // object's HTML
+    }; // object's HTML
 
     this.HTML = htmlElement; // object data
 
-    this.offset = completeOptions.offset;
-    this.axis = completeOptions.axis;
+    this.offset = offset || _defaults.offset;
+    this.axis = axis || _defaults.axis;
     this.active = false;
     this.htmlCoordinates = getInnerCoords(htmlElement);
-    this.coordinates = getOuterCoords(htmlElement, completeOptions.offset, completeOptions.axis);
+    this.coordinates = getOuterCoords(htmlElement, this.offset, this.axis);
   } // update both the coordinates of the actual HTML element as well as the imaginary offset bounding box surrounding it
 
 
@@ -286,7 +287,7 @@ var ActiveOverlapObject = /*#__PURE__*/function (_BasicOverlapObject) {
       var callbacks = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
       // default callbacks
-      var defaultCallbacks = {
+      var _defaultCallbacks = {
         onApproach: function onApproach(main, check) {
           return 1;
         },
@@ -301,24 +302,24 @@ var ActiveOverlapObject = /*#__PURE__*/function (_BasicOverlapObject) {
         }
       };
 
-      if (overlapObject.length) {
+      if (NodeList.prototype.isPrototypeOf(overlapObject)) {
         for (var i = 0; i < overlapObject.length; i++) {
           this.trackedObjects.push({
             object: overlapObject instanceof BasicOverlapObject ? overlapObject : new BasicOverlapObject(overlapObject[i], options),
-            callbacks: mergeObjects(defaultCallbacks, callbacks),
+            callbacks: mergeObjects(_defaultCallbacks, callbacks),
             lastOverlapData: {
-              x: undefined,
-              y: undefined
+              x: null,
+              y: null
             }
           });
         }
       } else {
         this.trackedObjects.push({
           object: overlapObject instanceof BasicOverlapObject ? overlapObject : new BasicOverlapObject(overlapObject, options),
-          callbacks: mergeObjects(defaultCallbacks, callbacks),
+          callbacks: mergeObjects(_defaultCallbacks, callbacks),
           lastOverlapData: {
-            x: undefined,
-            y: undefined
+            x: null,
+            y: null
           }
         });
       }
@@ -332,11 +333,12 @@ exports.ActiveOverlapObject = ActiveOverlapObject;
 
 var Lappy = /*#__PURE__*/function () {
   function Lappy() {
-    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        graphicalTest = _ref2.graphicalTest;
 
     _classCallCheck(this, Lappy);
 
-    if (options.graphicalTest) this.graphicalTest = new GraphicalTest(options.graphicalTest);
+    if (graphicalTest) this.graphicalTest = new GraphicalTest(graphicalTest);
     this.overlapObjects = [];
   } // add one more active object to be tracked by Lappy
 
@@ -577,17 +579,17 @@ function getDocumentWidth() {
 
 /***/ }),
 
-/***/ "./tmp/js/concept.js":
-/*!***************************!*\
-  !*** ./tmp/js/concept.js ***!
-  \***************************/
+/***/ "./tmp/js/demos/concept.js":
+/*!*********************************!*\
+  !*** ./tmp/js/demos/concept.js ***!
+  \*********************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _Lappy = __webpack_require__(/*! ./Lappy.js */ "./tmp/js/Lappy.js");
+var _Lappy = __webpack_require__(/*! ../Lappy.js */ "./tmp/js/Lappy.js");
 
 //import Lappy
 window.onload = function () {

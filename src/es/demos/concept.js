@@ -1,4 +1,4 @@
-import {BasicOverlapObject, ActiveOverlapObject, Lappy} from './Lappy.js'; //import Lappy
+import {BasicOverlapObject, ActiveOverlapObject, Lappy} from '../Lappy.js'; //import Lappy
 
 window.onload = function () {
 
