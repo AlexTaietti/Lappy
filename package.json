@@ -4,22 +4,24 @@
   "description": "JS snippet to dinamically handle HTML elements overlapping one another",
   "author": "Alex Taietti",
   "scripts": {
-    "compile:all": "gulp compileScss && gulp compileJs && echo 'smooooooth'",
-    "compile:scss": "gulp compileScss",
-    "compile:es": "gulp compileJs",
-    "serve": "gulp serve",
-    "bundle": "webpack --config webpack.config.js"
+    "bundle": "webpack --config webpack.config.js",
+    "dev": "webpack-dev-server --config webpack.dev.config.js"
   },
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.10.4",
     "@babel/preset-env": "^7.10.4",
+    "babel-loader": "^8.1.0",
     "browser-sync": "^2.26.7",
+    "css-loader": "^4.2.1",
     "gulp": "^4.0.2",
     "gulp-autoprefixer": "^7.0.1",
     "gulp-babel": "^8.0.0",
     "gulp-sass": "^4.1.0",
+    "sass-loader": "^9.0.3",
+    "style-loader": "^1.2.1",
     "webpack": "^4.44.0",
-    "webpack-cli": "^3.3.12"
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
   }
 }

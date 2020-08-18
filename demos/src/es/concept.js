@@ -1,6 +1,8 @@
-import {BasicOverlapObject, ActiveOverlapObject, Lappy} from '../Lappy.js'; //import Lappy
+import {BasicOverlapObject, ActiveOverlapObject, Lappy} from '../../../dist/Lappy.min.js'; //import Lappy
 
-window.onload = function () {
+import '../scss/concept.scss'; //import css for concept page
+
+!function () {
 
 
 	////////////
@@ -218,4 +220,4 @@ window.onload = function () {
 	L.watch();
 
 
-}
+}();
