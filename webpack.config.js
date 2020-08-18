@@ -2,27 +2,43 @@ const path = require('path')
 
 module.exports = {
 
-	entry: {
+	mode: 'production',
 
-		index: './tmp/js/demos/index.js',
+	module: {
 
-		concept: './tmp/js/demos/concept.js',
+		rules: [{
 
-		useful: './tmp/js/demos/useful.js'
+			test: /\.js$/,
 
-	},
+			use: {
 
-	output: {
+				loader: 'babel-loader',
 
-		path: path.resolve(__dirname, './dist/js'),
+				options: { presets: ['@babel/preset-env'] },
 
-		filename: '[name].js'
+			}
+
+		}]
 
 	},
 
 	devtool: 'source-map',
 
-	mode: 'development',
+	entry: './src/index.js',
+
+	output: {
+
+		filename: 'Lappy.min.js',
+
+		path: path.resolve(__dirname, 'dist'),
+
+		library: "lappy",
+
+		libraryTarget: "umd",
+
+		publicPath: path.resolve(__dirname, 'dist')
+
+	},
 
 	watch: true
 

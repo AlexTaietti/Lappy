@@ -1,7 +1,8 @@
-import {BasicOverlapObject, ActiveOverlapObject, Lappy} from '../Lappy.js'; //import Lappy
+import {BasicOverlapObject, ActiveOverlapObject, Lappy} from '../../../dist/Lappy.min.js'; //import Lappy
 
+import '../scss/useful.scss' //import css for useful example page
 
-window.onload = function () {
+!function () {
 
   //toggle an element's css class
 	function toggleClass(element, CSSClass){
@@ -75,4 +76,4 @@ window.onload = function () {
   L.watch();
 
 
-}
+}();
