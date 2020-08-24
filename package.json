@@ -4,17 +4,20 @@
   "description": "JS snippet to dinamically handle HTML elements overlapping one another",
   "author": "Alex Taietti",
   "scripts": {
-    "bundle": "webpack --config webpack.config.js",
-    "dev": "webpack-dev-server --config webpack.dev.config.js"
+    "build": "webpack --config webpack.config.js",
+    "demo": "webpack-dev-server --config webpack.demo.config.js",
+    "dev" : "concurrently \"npm:demo\" \"npm:build\""
   },
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.10.4",
     "@babel/preset-env": "^7.10.4",
     "babel-loader": "^8.1.0",
+    "concurrently": "^5.3.0",
     "css-loader": "^4.2.1",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "mini-css-extract-plugin": "^0.10.0",
+    "sass": "^1.26.10",
     "sass-loader": "^9.0.3",
     "style-loader": "^1.2.1",
     "webpack": "^4.44.0",

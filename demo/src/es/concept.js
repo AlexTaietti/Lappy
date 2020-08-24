@@ -1,6 +1,6 @@
-import {BasicOverlapObject, ActiveOverlapObject, Lappy} from '../../../dist/Lappy.min.js'; //import Lappy
+import {BasicOverlapObject, ActiveOverlapObject, Lappy} from 'Lappy/Lappy.min.js'; //import Lappy
 
-import '../scss/concept.scss'; //import css for concept page
+import '../scss/concept.scss';
 
 !function () {
 

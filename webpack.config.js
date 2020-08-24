@@ -1,14 +1,15 @@
-const path = require('path')
+const path = require('path');
+const dev = process.env.NODE_ENV === "development";
 
 module.exports = {
-
-	mode: 'production',
 
 	module: {
 
 		rules: [{
 
 			test: /\.js$/,
+
+			exclude: /node_modules/,
 
 			use: {
 
@@ -36,7 +37,7 @@ module.exports = {
 
 		libraryTarget: "umd",
 
-		publicPath: path.resolve(__dirname, 'dist')
+		publicPath: '/js/'
 
 	},
 
