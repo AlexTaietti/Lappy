@@ -35,7 +35,7 @@ module.exports = {
 
 		path: path.resolve(__dirname, 'dist'),
 
-		library: "lappy",
+		library: "Lappy",
 
 		libraryTarget: "umd",
 

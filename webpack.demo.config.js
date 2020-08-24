@@ -3,6 +3,8 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const lappyPath = path.resolve(__dirname, './dist/');
 const dev = process.env.NODE_ENV === "development";
 
+console.log(dev);
+
 module.exports = {
 
 	mode: dev ? "development" : "production",
@@ -61,7 +63,7 @@ module.exports = {
 
   },
 
-	output: { filename: '[name].min.js' },
+	output: { filename: '[name].js' },
 
 	watch: dev
 
