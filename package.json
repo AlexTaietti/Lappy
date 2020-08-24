@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack --config webpack.config.js",
     "demo": "webpack-dev-server --config webpack.demo.config.js",
-    "dev" : "concurrently \"npm:demo\" \"npm:build\""
+    "dev" : "NODE_ENV=development concurrently \"npm:demo\" \"npm:build\""
   },
   "license": "ISC",
   "devDependencies": {

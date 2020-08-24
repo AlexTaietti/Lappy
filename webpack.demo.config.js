@@ -1,10 +1,11 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const lappyPath = path.resolve(__dirname, './dist/');
+const dev = process.env.NODE_ENV === "development";
 
 module.exports = {
 
-	mode: 'development',
+	mode: dev ? "development" : "production",
 
 	resolve: { alias: { Lappy: lappyPath } },
 
@@ -22,7 +23,7 @@ module.exports = {
 
 				loader: 'babel-loader',
 
-				options: { presets: ['@babel/preset-env'] },
+				options: { presets: ['@babel/preset-env'] }
 
 			}
 
@@ -30,17 +31,11 @@ module.exports = {
 
         test: /\.s[ac]ss$/i,
 
-        use: [{
-					loader: MiniCssExtractPlugin.loader
-				}, 'css-loader', 'sass-loader'],
-
-				sideEffects: true
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
 
       }]
 
 	},
-
-	devtool: 'source-map',
 
 	entry: {
 
@@ -52,11 +47,13 @@ module.exports = {
 
   },
 
+	devtool: 'source-map',
+
 	devServer: {
 
 		contentBase: path.resolve(__dirname, 'demo'),
 
-    watchContentBase: true,
+    watchContentBase: dev,
 
     publicPath: '/assets/',
 
@@ -64,14 +61,8 @@ module.exports = {
 
   },
 
-	output: {
+	output: { filename: '[name].min.js' },
 
-		filename: '[name].min.js',
-
-		path: path.resolve(__dirname, './demo/dist/js')
-
-	},
-
-	watch: true
+	watch: dev
 
 };

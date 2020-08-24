@@ -3,6 +3,8 @@ const dev = process.env.NODE_ENV === "development";
 
 module.exports = {
 
+	mode: dev ? "development" : "production",
+
 	module: {
 
 		rules: [{
@@ -15,7 +17,7 @@ module.exports = {
 
 				loader: 'babel-loader',
 
-				options: { presets: ['@babel/preset-env'] },
+				options: { presets: ['@babel/preset-env'] }
 
 			}
 
@@ -41,6 +43,6 @@ module.exports = {
 
 	},
 
-	watch: true
+	watch: dev
 
 };
